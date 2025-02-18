@@ -75,7 +75,6 @@ QUESTIONS = [
     "Explain the implications of network effects in cryptocurrency adoption, focusing on token liquidity, user growth, and ecosystem development."
 ]
 
-
 def chat_with_ai(api_key: str, question: str) -> str:
     headers = {
         "Content-Type": "application/json",
@@ -95,22 +94,30 @@ def chat_with_ai(api_key: str, question: str) -> str:
     for attempt in range(MAX_RETRIES):
         try:
             logging.info(f"Attempt {attempt+1} for question: {question[:50]}...")
+
             response = requests.post(
                 f"{BASE_URL}/v1/chat/completions",
                 headers=headers,
                 json=data,
-                timeout=30
+                timeout=60  # Increased timeout
             )
 
             if response.status_code == 200:
                 return response.json()["choices"][0]["message"]["content"]
 
             logging.warning(f"API Error ({response.status_code}): {response.text}")
-            time.sleep(RETRY_DELAY)
+
+            # Exponential backoff (retry delay increases after each failure)
+            delay = RETRY_DELAY * (2 ** attempt)  # Double the delay after each retry
+            logging.info(f"Retrying in {delay}s...")
+            time.sleep(delay)
 
         except Exception as e:
             logging.error(f"Request failed: {str(e)}")
-            time.sleep(RETRY_DELAY)
+            # Exponential backoff
+            delay = RETRY_DELAY * (2 ** attempt)
+            logging.info(f"Retrying in {delay}s...")
+            time.sleep(delay)
 
     raise Exception("Max retries exceeded")
 
