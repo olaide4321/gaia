@@ -1,6 +1,7 @@
 import requests
 import random
 import time
+import os
 import logging
 from typing import List
 
@@ -132,9 +133,8 @@ def run_bot(api_key: str):
 
 def main():
     print("Title: GaiaAI Chatbot")
-    print("Created by: MEFURY")
-    print("Twitter: https://x.com/meefury")
-    api_key = input("Enter your API key: ")
+    print("Created by: Tejumola")
+    api_key = os.getenv('API_KEY')
     run_bot(api_key)
 
 if __name__ == "__main__":
