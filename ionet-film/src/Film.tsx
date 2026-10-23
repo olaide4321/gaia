@@ -22,21 +22,10 @@ const SCENES: Record<string, React.FC> = {
 };
 
 const Voiceover: React.FC = () => {
-  if (VOICEOVER.mode === 'full') {
-    return <Audio src={staticFile(`voiceover/full.${VOICEOVER.extension}`)} volume={VOICEOVER.volume} />;
-  }
-  if (VOICEOVER.mode === 'lines') {
-    return (
-      <>
-        {narration.lines.map((l) => (
-          <Sequence key={l.id} from={l.from} durationInFrames={narration.durationInFrames - l.from} layout="none">
-            <Audio src={staticFile(`voiceover/${l.id}.${VOICEOVER.extension}`)} volume={VOICEOVER.volume} />
-          </Sequence>
-        ))}
-      </>
-    );
-  }
-  return null;
+  if (VOICEOVER.mode === 'none') return null;
+  // 'lines': the per-line files, pre-combined into one track by scripts/assemble-voiceover.mjs
+  const file = VOICEOVER.mode === 'full' ? `voiceover/full.${VOICEOVER.extension}` : 'voiceover/assembled.wav';
+  return <Audio src={staticFile(file)} volume={VOICEOVER.volume} />;
 };
 
 export const Film: React.FC = () => {
