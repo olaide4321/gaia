@@ -65,13 +65,22 @@ Almost everything you'd want to change lives in **`src/config.ts`**:
 | `VOICEOVER.mode` | `'none'` (default), `'lines'` (ten files `public/voiceover/vo-01.wav` … `vo-10.wav`) or `'full'` (one file `public/voiceover/full.wav`) |
 | `SCORE.volume` / `duckedVolume` | Music level. The music is lowered automatically under the voiceover. |
 | `SUBTITLES.burnIn` | `false` for a clean picture (the `.srt` is still generated) |
-| `LOGO.file` | Path to an official logo file in `public/`. While it's `null`, a typographic **placeholder** wordmark is shown. |
+| `LOGO.file` | `'auto'` (default) detects `public/ionet-logo.svg`, `.png` or `.webp`. Until one exists, a typographic **placeholder** wordmark is shown. |
+| `LOGO.tint` | `'original'` keeps the logo's colours; `'ivory'` recolours it to the film's ivory |
 
 ### Using the official io.net logo
-This project doesn't bundle the official logo, and no external assets were downloaded. To use it:
-1. Get an approved logo file (SVG or PNG) from io.net's brand resources, and confirm you're allowed to use it.
-2. Save it as `public/ionet-logo.svg`.
-3. In `src/config.ts`, set `LOGO.file` to `'ionet-logo.svg'`.
+The official logo appears **everywhere io.net is shown on screen**: the introduction in Act 3 (about 0:29) and the end card (about 0:55). It keeps the gold glow and light-sweep effects.
+
+The logo file isn't bundled, so you need to add it yourself:
+1. Download the logo from io.net's media kit: <https://io.net/media-kit>. Pick the **white** version, because the film is dark. SVG is best.
+2. Rename it to **`ionet-logo.svg`** (or `ionet-logo.png`) and put it in **`ionet-film/public/`**.
+3. Run `npm run render`. The logo is detected automatically; no code changes are needed.
+
+If you only have the black version, set `LOGO.tint: 'ivory'` in `src/config.ts`. To resize the logo, change `LOGO.height`.
+
+Use of the logo is subject to io.net's brand guidelines on that page, so don't stretch or alter it.
+
+> The subtitles still spell out "io.net" as text, so they stay readable and accessible.
 
 ### Changing narration text or timing
 Edit **`src/data/narration.json`**. It is the single source of truth for:
@@ -128,4 +137,4 @@ ionet-film/
 
 * The engineer, her FLOODWATCH-LAGOS project and all on-screen figures are **fictional**. The film doesn't claim that io.net powered any real flood prediction, and it says so in the final seconds.
 * The globe's nodes and arcs are an artistic visualization, not real network data.
-* The "io.net" wordmark is a placeholder in a generic typeface. Replace it with the official logo where permitted.
+* Until the official logo file is added, the "io.net" wordmark is a placeholder in a generic typeface.

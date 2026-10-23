@@ -46,12 +46,21 @@ export const SUBTITLES = {
 
 /**
  * LOGO
- * The official io.net logo is NOT bundled (no external assets were downloaded).
- * A typographic placeholder wordmark is used instead.
- * To use the official logo: place an approved file in public/ (e.g. public/ionet-logo.svg)
- * and set `file: 'ionet-logo.svg'`. Adjust `height` to taste.
+ * The official io.net logo is not bundled with this project. Download it from io.net's
+ * media kit (https://io.net/media-kit), using the WHITE version since the film is dark,
+ * and save it as one of:
+ *     public/ionet-logo.svg   (best)
+ *     public/ionet-logo.png
+ *     public/ionet-logo.webp
+ * It is detected automatically and used everywhere io.net appears on screen.
+ * Until then a typographic placeholder wordmark is shown.
+ *  - file:   'auto' to detect the files above, a specific path inside public/, or null for the placeholder
+ *  - height: logo height in pixels on the end card (the Act 3 introduction uses 62% of this)
+ *  - tint:   'original' keeps the file's colours; 'ivory' recolours it to the film's ivory
+ *            (useful if you only have the black version)
  */
-export const LOGO: {file: string | null; height: number} = {
-  file: null,
+export const LOGO: {file: 'auto' | string | null; height: number; tint: 'original' | 'ivory'} = {
+  file: 'auto',
   height: 150,
+  tint: 'original',
 };
