@@ -61,6 +61,6 @@ export const SUBTITLES = {
  */
 export const LOGO: {file: 'auto' | string | null; height: number; tint: 'original' | 'ivory'} = {
   file: 'auto',
-  height: 150,
+  height: 100,
   tint: 'original',
 };
