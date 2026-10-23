@@ -7,11 +7,13 @@ import {lerp} from '../util';
  *  - amber:  full duotone, for blue- or teal-lit photos
  *  - warm:   keeps the photo's colour but warms and darkens it
  *  - golden: for photos that are already gold, adds contrast
+ *  - hope:   a brighter, warmer amber for the turn toward optimism
  */
 const GRADES = {
   amber: 'grayscale(1) sepia(1) saturate(1.9) hue-rotate(-10deg) contrast(1.18) brightness(0.72)',
   warm: 'sepia(0.72) saturate(1.0) hue-rotate(-8deg) contrast(1.12) brightness(0.78)',
   golden: 'saturate(0.95) contrast(1.15) brightness(0.85)',
+  hope: 'grayscale(0.7) sepia(0.95) saturate(1.6) hue-rotate(-8deg) contrast(1.1) brightness(0.98)',
 };
 
 /** A supplied photograph (from public/photos) with a slow Ken Burns move and a warm grade. */

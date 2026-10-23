@@ -84,7 +84,7 @@ export const Act5Reveal: React.FC = () => {
             opacity: envelope(f, 225, 300, 20, 1) * 0.7,
           }}
         >
-          Dramatization. The engineer, her project and all on-screen data are fictional.
+          Dramatization. The engineer's story, his project and all on-screen data are fictional.
         </div>
       </AbsoluteFill>
     </AbsoluteFill>

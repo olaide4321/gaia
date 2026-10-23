@@ -4,8 +4,6 @@ import {Camera, LocationTag} from '../components/Frame';
 import {Photo} from '../components/Photo';
 import {RainStreaks} from '../components/Rain';
 import {Haze} from '../components/Atmosphere';
-import {Workstation} from '../components/Workstation';
-import {Engineer} from '../components/Engineer';
 import {TrainingScreen} from '../components/Screen';
 import {C, FONT} from '../theme';
 import {envelope, lerp} from '../util';
@@ -52,22 +50,21 @@ export const Act1Problem: React.FC = () => {
         <LocationTag start={72} end={128} place="Lagos, Nigeria" detail="03:14 WAT · HEAVY RAIN" />
       </AbsoluteFill>
 
-      {/* Shot B — interior: the engineer at her desk */}
+      {/* Shot B — interior: the engineer at his desk, late at night */}
       <AbsoluteFill style={{opacity: envelope(f, 116, 210, 14, 12)}}>
-        <Camera start={116} duration={95} from={{s: 1.06, x: 30, y: 0}} to={{s: 1.0, x: -20, y: 0}} shake={1.2}>
-          <Workstation frame={f} screen={stalled} light={0.95} flicker={0.2} lightning={lightning} />
-        </Camera>
+        <Photo src="engineer.jpg" start={116} end={210} grade="amber" from={{s: 1.12, x: 40, y: 0}} to={{s: 1.02, x: 0, y: 0}} shade={0.2} />
+        {/* rain running down the window, its shadow drifting over the room */}
+        <AbsoluteFill style={{mixBlendMode: 'multiply', opacity: 0.35}}>
+          <RainStreaks count={160} seed={4} opacity={1} speed={10} color="0,0,0" length={80} />
+        </AbsoluteFill>
+        <AbsoluteFill style={{background: `rgba(255,236,205,${lightning * 0.35})`, mixBlendMode: 'screen'}} />
       </AbsoluteFill>
 
-      {/* Shot C — close-up: her face in the monitor glow */}
+      {/* Shot C — close-up: his face in the monitor glow */}
       <AbsoluteFill style={{opacity: envelope(f, 200, 252, 8, 10), background: C.black}}>
-        <Camera start={200} duration={52} from={{s: 1.0, x: 0, y: 0}} to={{s: 1.06, x: -10, y: 0}} shake={2}>
-          <AbsoluteFill style={{background: 'radial-gradient(ellipse at 85% 40%, #3a2412 0%, #0b0806 55%)'}} />
-          <div style={{position: 'absolute', left: -120, top: -400, width: 1840, height: 2640}}>
-            <Engineer frame={f} light={1.2 + lightning * 0.6} flicker={0.35} blinkAt={[226]} />
-          </div>
-          <RainStreaks count={120} seed={9} opacity={0.12} speed={26} />
-        </Camera>
+        <Photo src="engineer.jpg" start={200} end={252} grade="amber" from={{s: 1.9, x: 330, y: 225}} to={{s: 2.05, x: 350, y: 240}} shade={0.15} />
+        <AbsoluteFill style={{background: 'rgba(232,138,42,0.12)', mixBlendMode: 'screen', opacity: 0.6 + 0.4 * Math.sin(f * 1.7)}} />
+        <AbsoluteFill style={{background: `rgba(255,236,205,${lightning * 0.3})`, mixBlendMode: 'screen'}} />
       </AbsoluteFill>
 
       {/* Shot D — the screen: training paused */}

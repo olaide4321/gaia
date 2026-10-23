@@ -33,4 +33,4 @@ If you'd rather record the whole narration in one take, follow the timings above
 
 ## Note on the story
 
-The engineer, her flood-risk project and all on-screen numbers and data are fictional. The film doesn't claim that io.net powered any real flood forecast. A dramatization notice appears in the final seconds.
+The engineer's story, his flood-risk project and all on-screen numbers and data are fictional. The film doesn't claim that io.net powered any real flood forecast. A dramatization notice appears in the final seconds.

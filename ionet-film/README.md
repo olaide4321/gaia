@@ -3,8 +3,8 @@
 A 60-second cinematic film about **io.net**, built in code with [Remotion](https://www.remotion.dev/), React and TypeScript.
 
 * 1920×1080 · 30 fps · 1,800 frames · H.264 MP4
-* The animated parts are code-generated (SVG, Canvas and CSS): the globe network, the engineer, the dashboards and the flood map.
-* Nine photographs supplied by the project owner (in `public/photos/`) are colour-graded to the film's palette and given slow camera moves.
+* The animated parts are code-generated (SVG, Canvas and CSS): the globe network, the dashboards and the flood map.
+* Ten photographs supplied by the project owner (in `public/photos/`) are colour-graded to the film's palette and given slow camera moves.
 * The score and sound design are synthesised by a script (oscillators and noise). No audio samples.
 * Subtitles are burned in, and also exported as `.srt` and `.vtt`.
 * Voiceover support is built in, ready for your own recordings (see [NARRATION.md](NARRATION.md)).
@@ -13,10 +13,10 @@ A 60-second cinematic film about **io.net**, built in code with [Remotion](https
 
 | Time | Act | What you see |
 |---|---|---|
-| 0–10 s | **The Problem** | Rain over the city at night, then Lagos at night (the Civic Centre tower and the expressway), with lightning. An engineer's AI project stalls: *TRAINING PAUSED — insufficient compute*. |
+| 0–10 s | **The Problem** | Rain over the city at night, then Lagos at night (the Civic Centre tower and the expressway), with lightning. A Lagos AI engineer works late at his desk, and his project stalls: *TRAINING PAUSED — insufficient compute*. |
 | 10–22 s | **The Invisible Resources** | Idle machines: an empty office in Toronto, a university lab in Bengaluru, GPU racks in a Seoul data facility, then a montage grid of idle machines worldwide. |
 | 22–38 s | **The Discovery** | GPUs linked by streams of light, then a dark dotted globe. GPU nodes ignite outward from Lagos and connect through golden arcs. io.net is introduced, and the network converges in an anamorphic flare. |
-| 38–50 s | **The Possibility** | Dawn. Her (fictional) workload resumes on distributed workers, first light over Lagos, training completes, rain on a Lagos road, and a flood-risk map of Lagos sweeps onto the screen. |
+| 38–50 s | **The Possibility** | Back at his desk, his (fictional) workload resumes on distributed workers, first light over Lagos, training completes, rain on a Lagos road, and a flood-risk map of Lagos sweeps onto the screen. |
 | 50–60 s | **The Reveal** | Pull back through a glowing network, then the io.net end card over a golden globe: *Distributed GPU compute. Connected for what's next.* |
 
 ---
@@ -90,6 +90,7 @@ The photos live in `public/photos/` and are placed by the scene files in `src/sc
 |---|---|
 | `rain-night-city.jpg` | Act 1 opening title |
 | `lagos-night.jpg` | Act 1, "Lagos, Nigeria" |
+| `engineer.jpg` | Act 1 wide shot and face close-up; Act 4 medium shot |
 | `idle-office.jpg` | Act 2, Toronto office |
 | `gpu-racks.jpg` | Act 2, Seoul data facility (cropped to leave out the padlock) |
 | `gpus-connected.jpg` | Act 3 opening |
@@ -98,7 +99,7 @@ The photos live in `public/photos/` and are placed by the scene files in `src/sc
 | `network-surface.jpg` | Act 5 pull-back |
 | `gold-globe.jpg` | Act 5 end-card backdrop |
 
-To swap a photo, replace the file and keep its name. `<Photo grade="amber" | "warm" | "golden">` sets the colour treatment. Make sure you have the rights to any image you publish.
+To swap a photo, replace the file and keep its name. `<Photo grade="amber" | "warm" | "golden" | "hope">` sets the colour treatment. Make sure you have the rights to any image you publish.
 
 ### Changing narration text or timing
 Edit **`src/data/narration.json`**. It is the single source of truth for:
@@ -122,7 +123,7 @@ ionet-film/
 │   ├── data/geo.ts            ← hand-drawn simplified continents + city nodes
 │   ├── Film.tsx               ← assembles acts, overlays, audio
 │   ├── scenes/                ← Act1Problem … Act5Reveal
-│   └── components/            ← Globe, Photo, Lagos skyline, Engineer, Rain, server rack,
+│   └── components/            ← Globe, Photo, Rain, server rack,
 │                                 screens/flood map, flares, grain, letterbox, subtitles
 ├── scripts/
 │   ├── generate-soundtrack.mjs  → public/audio/score.wav
@@ -155,6 +156,6 @@ ionet-film/
 
 ## Disclaimers
 
-* The engineer, her FLOODWATCH-LAGOS project and all on-screen figures are **fictional**. The film doesn't claim that io.net powered any real flood prediction, and it says so in the final seconds.
+* The engineer's story, his FLOODWATCH-LAGOS project and all on-screen figures are **fictional**. The film doesn't claim that io.net powered any real flood prediction, and it says so in the final seconds.
 * The globe's nodes and arcs are an artistic visualization, not real network data.
 * The io.net logo and the photographs in `public/photos/` were supplied by the project owner, who is responsible for having the rights to use them.
