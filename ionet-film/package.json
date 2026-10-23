@@ -1,0 +1,28 @@
+{
+  "name": "ionet-idle-machines-film",
+  "version": "1.0.0",
+  "private": true,
+  "description": "THE WORLD'S IDLE MACHINES — a 60-second cinematic film about io.net, built with Remotion.",
+  "scripts": {
+    "audio": "node scripts/generate-soundtrack.mjs",
+    "subtitles": "node scripts/generate-subtitles.mjs",
+    "prepare-assets": "npm run audio && npm run subtitles",
+    "studio": "npm run prepare-assets && remotion studio",
+    "render": "npm run prepare-assets && remotion render IdleMachines out/the-worlds-idle-machines.mp4",
+    "still": "remotion still IdleMachines out/still.png --frame=900",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "5.1.0",
+    "@fontsource/inter": "5.1.0",
+    "@fontsource/jetbrains-mono": "5.1.0",
+    "@remotion/cli": "4.0.538",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.538"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "typescript": "5.6.3"
+  }
+}
