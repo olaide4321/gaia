@@ -1,9 +1,10 @@
 # THE WORLD'S IDLE MACHINES
 
-A 60-second cinematic film about **io.net**, built entirely in code with [Remotion](https://www.remotion.dev/), React and TypeScript.
+A 60-second cinematic film about **io.net**, built in code with [Remotion](https://www.remotion.dev/), React and TypeScript.
 
 * 1920×1080 · 30 fps · 1,800 frames · H.264 MP4
-* All visuals are code-generated (SVG, Canvas and CSS). No stock footage, images or downloaded assets.
+* The animated parts are code-generated (SVG, Canvas and CSS): the globe network, the engineer, the dashboards and the flood map.
+* Nine photographs supplied by the project owner (in `public/photos/`) are colour-graded to the film's palette and given slow camera moves.
 * The score and sound design are synthesised by a script (oscillators and noise). No audio samples.
 * Subtitles are burned in, and also exported as `.srt` and `.vtt`.
 * Voiceover support is built in, ready for your own recordings (see [NARRATION.md](NARRATION.md)).
@@ -12,11 +13,11 @@ A 60-second cinematic film about **io.net**, built entirely in code with [Remoti
 
 | Time | Act | What you see |
 |---|---|---|
-| 0–10 s | **The Problem** | Rainy Lagos at night: skyline, cable-stayed bridge, lagoon reflections, lightning. An engineer's AI project stalls: *TRAINING PAUSED — insufficient compute*. |
-| 10–22 s | **The Invisible Resources** | Idle GPUs: an office in Toronto, a university lab in Bengaluru, a data hall in Seoul, then a montage grid of idle machines worldwide. |
-| 22–38 s | **The Discovery** | A dark dotted globe. GPU nodes ignite outward from Lagos and connect through golden arcs. io.net is introduced, and the network converges in an anamorphic flare. |
-| 38–50 s | **The Possibility** | Dawn. Her (fictional) workload resumes on distributed workers, training completes, and a flood-risk map of Lagos sweeps onto the screen. |
-| 50–60 s | **The Reveal** | Pull back to the glowing global network, then the io.net end card: *Distributed GPU compute. Connected for what's next.* |
+| 0–10 s | **The Problem** | Rain over the city at night, then Lagos at night (the Civic Centre tower and the expressway), with lightning. An engineer's AI project stalls: *TRAINING PAUSED — insufficient compute*. |
+| 10–22 s | **The Invisible Resources** | Idle machines: an empty office in Toronto, a university lab in Bengaluru, GPU racks in a Seoul data facility, then a montage grid of idle machines worldwide. |
+| 22–38 s | **The Discovery** | GPUs linked by streams of light, then a dark dotted globe. GPU nodes ignite outward from Lagos and connect through golden arcs. io.net is introduced, and the network converges in an anamorphic flare. |
+| 38–50 s | **The Possibility** | Dawn. Her (fictional) workload resumes on distributed workers, first light over Lagos, training completes, rain on a Lagos road, and a flood-risk map of Lagos sweeps onto the screen. |
+| 50–60 s | **The Reveal** | Pull back through a glowing network, then the io.net end card over a golden globe: *Distributed GPU compute. Connected for what's next.* |
 
 ---
 
@@ -82,6 +83,23 @@ Use of the logo is subject to io.net's brand guidelines on that page, so don't s
 
 > The subtitles still spell out "io.net" as text, so they stay readable and accessible.
 
+### Photographs
+The photos live in `public/photos/` and are placed by the scene files in `src/scenes/` with the `<Photo>` component (`src/components/Photo.tsx`).
+
+| File | Used in |
+|---|---|
+| `rain-night-city.jpg` | Act 1 opening title |
+| `lagos-night.jpg` | Act 1, "Lagos, Nigeria" |
+| `idle-office.jpg` | Act 2, Toronto office |
+| `gpu-racks.jpg` | Act 2, Seoul data facility (cropped to leave out the padlock) |
+| `gpus-connected.jpg` | Act 3 opening |
+| `lagos-aerial-dawn.jpg` | Act 4, first light over Lagos |
+| `lagos-rain-road.jpg` | Act 4, before the flood map |
+| `network-surface.jpg` | Act 5 pull-back |
+| `gold-globe.jpg` | Act 5 end-card backdrop |
+
+To swap a photo, replace the file and keep its name. `<Photo grade="amber" | "warm" | "golden">` sets the colour treatment. Make sure you have the rights to any image you publish.
+
 ### Changing narration text or timing
 Edit **`src/data/narration.json`**. It is the single source of truth for:
 * the burned-in subtitles,
@@ -104,12 +122,14 @@ ionet-film/
 │   ├── data/geo.ts            ← hand-drawn simplified continents + city nodes
 │   ├── Film.tsx               ← assembles acts, overlays, audio
 │   ├── scenes/                ← Act1Problem … Act5Reveal
-│   └── components/            ← Globe, Lagos skyline, Engineer, Rain, GPU hardware,
+│   └── components/            ← Globe, Photo, Lagos skyline, Engineer, Rain, server rack,
 │                                 screens/flood map, flares, grain, letterbox, subtitles
 ├── scripts/
 │   ├── generate-soundtrack.mjs  → public/audio/score.wav
 │   └── generate-subtitles.mjs   → subtitles/*.srt, *.vtt
 ├── subtitles/                 ← generated subtitle files
+├── public/photos/             ← supplied photographs (graded in code)
+├── public/ionet-logo.png      ← official io.net logo
 ├── public/voiceover/          ← put your recordings here
 ├── NARRATION.md               ← narration script with timings and recording tips
 └── out/                       ← rendered video (git-ignored)
@@ -137,4 +157,4 @@ ionet-film/
 
 * The engineer, her FLOODWATCH-LAGOS project and all on-screen figures are **fictional**. The film doesn't claim that io.net powered any real flood prediction, and it says so in the final seconds.
 * The globe's nodes and arcs are an artistic visualization, not real network data.
-* Until the official logo file is added, the "io.net" wordmark is a placeholder in a generic typeface.
+* The io.net logo and the photographs in `public/photos/` were supplied by the project owner, who is responsible for having the rights to use them.

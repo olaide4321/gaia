@@ -1,7 +1,8 @@
 import React from 'react';
 import {AbsoluteFill, random, useCurrentFrame} from 'remotion';
 import {Camera, LocationTag} from '../components/Frame';
-import {GpuCard, RackCorridor, ServerRack} from '../components/Hardware';
+import {ServerRack} from '../components/Hardware';
+import {Photo} from '../components/Photo';
 import {DustMotes, Haze} from '../components/Atmosphere';
 import {C, FONT} from '../theme';
 import {envelope, lerp} from '../util';
@@ -26,41 +27,17 @@ export const Act2Idle: React.FC = () => {
   const f = useCurrentFrame();
   return (
     <AbsoluteFill style={{background: C.black}}>
-      {/* Shot A — office at night, a workstation GPU sits idle behind glass */}
+      {/* Shot A — an office at night: rows of workstations, nobody using them */}
       <AbsoluteFill style={{opacity: envelope(f, 0, 112, 16, 12)}}>
-        <Camera duration={112} from={{s: 1.12, x: 80, y: 0}} to={{s: 1.0, x: -60, y: 0}}>
-          <AbsoluteFill style={{background: 'radial-gradient(ellipse at 30% 30%, #2a1f14 0%, #0b0907 60%)'}} />
-          {/* window blind light stripes */}
-          <AbsoluteFill style={{transform: 'skewY(-12deg)', opacity: 0.35}}>
-            {new Array(9).fill(0).map((_, i) => (
-              <div key={i} style={{position: 'absolute', left: 0, right: 0, top: 120 + i * 70, height: 26, background: 'linear-gradient(90deg, rgba(232,138,42,0.0), rgba(232,138,42,0.35), rgba(232,138,42,0))'}} />
-            ))}
-          </AbsoluteFill>
-          {/* case glass panel */}
-          <div
-            style={{
-              position: 'absolute',
-              left: 260,
-              top: 230,
-              width: 1400,
-              height: 640,
-              border: '2px solid rgba(243,201,107,0.18)',
-              borderRadius: 14,
-              background: 'linear-gradient(135deg, rgba(255,240,210,0.06), rgba(0,0,0,0) 40%, rgba(255,240,210,0.04) 70%, rgba(0,0,0,0))',
-            }}
-          />
-          <div style={{position: 'absolute', left: 340, top: 330, width: 1240, height: 470, transform: 'perspective(2000px) rotateX(8deg)'}}>
-            <GpuCard frame={f} fanSpeed={0} led={0.18} />
-          </div>
-          <Haze opacity={0.2} seed={5} />
-          <DustMotes count={60} seed={8} />
-        </Camera>
-        <LocationTag start={8} end={108} place="Office · Toronto" detail={`22:14 LOCAL · GPU UTILIZATION 0%`} />
+        <Photo src="idle-office.jpg" start={0} end={112} grade="amber" from={{s: 1.16, x: 0, y: 0}} to={{s: 1.04, x: 0, y: 8}} shade={0.15} />
+        <Haze opacity={0.16} seed={5} />
+        <DustMotes count={50} seed={8} opacity={0.7} />
+        <LocationTag start={8} end={108} place="Office · Toronto" detail="22:14 LOCAL · GPU UTILIZATION 0%" />
       </AbsoluteFill>
 
       {/* Shot B — university lab, morning light, racks unused */}
       <AbsoluteFill style={{opacity: envelope(f, 100, 215, 12, 12)}}>
-        <Camera duration={115} from={{s: 1.0, x: 0, y: 0}} to={{s: 1.1, x: -120, y: 0}}>
+        <Camera start={100} duration={115} from={{s: 1.0, x: 0, y: 0}} to={{s: 1.1, x: -120, y: 0}}>
           <AbsoluteFill style={{background: 'linear-gradient(180deg, #1a140e 0%, #0b0907 100%)'}} />
           {/* light shafts through tall windows */}
           {[0, 1, 2].map((i) => (
@@ -96,10 +73,10 @@ export const Act2Idle: React.FC = () => {
         <LocationTag start={110} end={210} place="University lab · Bengaluru" detail="07:44 LOCAL · 4% LOAD" align="right" />
       </AbsoluteFill>
 
-      {/* Shot C — data facility corridor */}
+      {/* Shot C — data facility: racks of GPUs, idle */}
       <AbsoluteFill style={{opacity: envelope(f, 205, 300, 10, 12)}}>
-        <RackCorridor frame={f} dolly={lerp(f, [205, 300], [0, 3.2], (x) => x)} />
-        <Haze opacity={0.28} seed={9} />
+        <Photo src="gpu-racks.jpg" start={205} end={300} grade="warm" position="40% 50%" from={{s: 1.02, x: 30, y: 0}} to={{s: 1.12, x: -40, y: 0}} shade={0.1} />
+        <Haze opacity={0.2} seed={9} />
         <LocationTag start={212} end={296} place="Data facility · Seoul" detail="11:14 LOCAL · CAPACITY UNUSED" />
         <Readout label="IDLE FOR" value={clock(14 * 3600 + 22 * 60, f)} x={1380} y={760} o={envelope(f, 225, 296, 12, 10)} />
       </AbsoluteFill>

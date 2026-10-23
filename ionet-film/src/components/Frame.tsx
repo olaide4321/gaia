@@ -53,13 +53,14 @@ export const Subtitles: React.FC = () => {
 export const Camera: React.FC<{
   children: React.ReactNode;
   duration: number;
+  start?: number; // frame (within the current Sequence) at which the move begins
   from?: {s: number; x: number; y: number};
   to?: {s: number; x: number; y: number};
   shake?: number;
   origin?: string;
-}> = ({children, duration, from = {s: 1, x: 0, y: 0}, to = {s: 1.08, x: 0, y: 0}, shake = 0, origin = '50% 50%'}) => {
+}> = ({children, duration, start = 0, from = {s: 1, x: 0, y: 0}, to = {s: 1.08, x: 0, y: 0}, shake = 0, origin = '50% 50%'}) => {
   const frame = useCurrentFrame();
-  const t = (a: number, b: number) => lerp(frame, [0, duration], [a, b], (x) => x * (2 - x) * 0.5 + x * 0.5);
+  const t = (a: number, b: number) => lerp(frame, [start, start + duration], [a, b], (x) => x * (2 - x) * 0.5 + x * 0.5);
   const sx = shake * (Math.sin(frame / 23) * 0.6 + Math.sin(frame / 9.7) * 0.4);
   const sy = shake * (Math.cos(frame / 19) * 0.6 + Math.sin(frame / 11.3) * 0.4);
   return (
