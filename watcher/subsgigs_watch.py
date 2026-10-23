@@ -37,12 +37,15 @@ NOISE = re.compile(r"^(\d+[smhd] ago|\d{1,2}:\d{2}(:\d{2})?|loading\.*)$", re.I)
 
 
 def fetch_snapshot(url):
-    """Return {"campaigns": {href: text}, "lines": [visible text lines]}."""
+    """Return {"campaigns": {href: text}, "lines": [visible text lines]}, or None if blocked."""
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page()
         page.goto(url, wait_until="networkidle", timeout=60_000)
         page.wait_for_timeout(3_000)  # let client-side lists finish rendering
+        if page.title() == "Vercel Security Checkpoint":
+            browser.close()
+            return None
         links = page.eval_on_selector_all(
             "a[href]",
             "els => els.map(e => [e.getAttribute('href'), e.innerText.trim()])",
@@ -147,6 +150,9 @@ def main():
         sys.exit(0 if ok else 1)
 
     snapshot = fetch_snapshot(WATCH_URL)
+    if snapshot is None:
+        print("Blocked by Vercel Security Checkpoint; the site refuses this runner. Nothing saved.")
+        return
     print(f"Found {len(snapshot['campaigns'])} campaign links, {len(snapshot['lines'])} text lines")
     if not snapshot["lines"]:
         print("Page rendered empty; skipping so a blank load is not treated as a change.")

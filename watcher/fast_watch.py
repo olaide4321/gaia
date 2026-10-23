@@ -53,6 +53,10 @@ TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 session = requests.Session()  # keep-alive: reuses the connection between checks
 
 
+class Blocked(Exception):
+    """The site's bot protection (Vercel Security Checkpoint) refused the request."""
+
+
 def find_items(data):
     """Return the campaign list from the response."""
     if ITEMS_PATH:
@@ -100,6 +104,8 @@ def telegram(text, link=None):
 
 def fetch():
     resp = session.get(API_URL, headers=API_HEADERS, timeout=10)
+    if "Vercel Security Checkpoint" in resp.text[:2000]:
+        raise Blocked(f"HTTP {resp.status_code}")
     if resp.status_code in (401, 403):
         raise PermissionError(f"HTTP {resp.status_code}")
     resp.raise_for_status()
@@ -110,16 +116,28 @@ def main():
     if not API_URL:
         sys.exit("Set API_URL (see fast_watch.env.example).")
 
-    seen = {item_id(i) for i in fetch()}
+    try:
+        seen = {item_id(i) for i in fetch()}
+    except Blocked as exc:
+        sys.exit(f"{API_URL} answered with Vercel's Security Checkpoint ({exc}), which blocks "
+                 "scripts on this server. Use a data URL on another host (see README).")
     print(f"Watching {API_URL} every {POLL_SECONDS}s; {len(seen)} campaigns already listed.")
     telegram(f"Fast watcher started. {len(seen)} campaigns currently listed.")
 
     errors = 0
     auth_warned = False
+    blocked_warned = False
     while True:
         time.sleep(POLL_SECONDS)
         try:
             items = fetch()
+        except Blocked as exc:
+            if not blocked_warned:
+                telegram(f"Watcher is being blocked by the site's bot check ({exc}). "
+                         "It keeps retrying every minute.")
+                blocked_warned = True
+            time.sleep(60)
+            continue
         except PermissionError as exc:
             if not auth_warned:
                 telegram(f"Watcher lost access ({exc}). Your login token probably expired: "
@@ -135,6 +153,7 @@ def main():
 
         errors = 0
         auth_warned = False
+        blocked_warned = False
         for item in items:
             key = item_id(item)
             if key not in seen:

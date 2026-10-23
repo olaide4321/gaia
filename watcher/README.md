@@ -30,6 +30,13 @@ Scheduled workflows run only from the repository's default branch, so this start
 `fast_watch.py` runs 24/7 on your own server and checks the site's data endpoint every 3 seconds,
 then pushes a Telegram message with an **Open now** button.
 
+## Blocked by Vercel's Security Checkpoint
+The site's pages, including `/api/...` on `subsgigs-alpha.vercel.app`, sit behind Vercel's bot
+protection. It refuses scripts and headless browsers on cloud servers (tested: HTTP 429, "Failed to
+verify your browser"). Both watchers now detect this and say so instead of alerting on the block page.
+The fast watcher can only work if the campaign list loads from a **different host** (for example a
+`*.supabase.co` URL); step 1 below shows whether it does.
+
 ## 1. Find the data endpoint (once, in Chrome on a computer)
 1. Log in to SubsGigs and open the Campaigns page.
 2. Press **F12** → **Network** tab → click **Fetch/XHR** → reload the page.
