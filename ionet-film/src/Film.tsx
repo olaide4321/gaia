@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Audio, Sequence, staticFile} from 'remotion';
+import {AbsoluteFill, Audio, interpolate, Sequence, staticFile} from 'remotion';
 import narration from './data/narration.json';
 import {SCORE, VOICEOVER} from './config';
 import {Act1Problem} from './scenes/Act1Problem';
@@ -62,8 +62,13 @@ export const Film: React.FC = () => {
           src={staticFile('audio/score.wav')}
           volume={(f) => {
             if (!voiced) return SCORE.volume;
-            const speaking = narration.lines.some((l) => f >= l.from - 6 && f < l.to + 6);
-            return speaking ? SCORE.duckedVolume : SCORE.volume;
+            // Ease the music down under each line and back up afterwards.
+            const duck = Math.max(
+              ...narration.lines.map((l) =>
+                interpolate(f, [l.from - 10, l.from, l.to, l.to + 14], [0, 1, 1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}),
+              ),
+            );
+            return SCORE.volume - (SCORE.volume - SCORE.duckedVolume) * duck;
           }}
         />
       ) : null}

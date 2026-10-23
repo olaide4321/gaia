@@ -7,7 +7,7 @@ A 60-second cinematic film about **io.net**, built in code with [Remotion](https
 * Ten photographs supplied by the project owner (in `public/photos/`) are colour-graded to the film's palette and given slow camera moves.
 * The score and sound design are synthesised by a script (oscillators and noise). No audio samples.
 * Subtitles are burned in, and also exported as `.srt` and `.vtt`.
-* Voiceover support is built in, ready for your own recordings (see [NARRATION.md](NARRATION.md)).
+* The narration is voiced by the free, open Kokoro-82M AI voice model, generated offline (see [NARRATION.md](NARRATION.md)). You can swap in your own recordings.
 
 ## The story
 
@@ -63,7 +63,7 @@ Almost everything you'd want to change lives in **`src/config.ts`**:
 
 | Setting | What it does |
 |---|---|
-| `VOICEOVER.mode` | `'none'` (default), `'lines'` (ten files `public/voiceover/vo-01.wav` … `vo-10.wav`) or `'full'` (one file `public/voiceover/full.wav`) |
+| `VOICEOVER.mode` | `'lines'` (default), `'none'` (ten files `public/voiceover/vo-01.wav` … `vo-10.wav`) or `'full'` (one file `public/voiceover/full.wav`) |
 | `SCORE.volume` / `duckedVolume` | Music level. The music is lowered automatically under the voiceover. |
 | `SUBTITLES.burnIn` | `false` for a clean picture (the `.srt` is still generated) |
 | `LOGO.file` | `'auto'` (default) detects `public/ionet-logo.svg`, `.png` or `.webp`. Until one exists, a typographic **placeholder** wordmark is shown. |
@@ -101,6 +101,13 @@ The photos live in `public/photos/` and are placed by the scene files in `src/sc
 
 To swap a photo, replace the file and keep its name. `<Photo grade="amber" | "warm" | "golden" | "hope">` sets the colour treatment. Make sure you have the rights to any image you publish.
 
+### The voiceover
+The ten narration files in `public/voiceover/` were made with **Kokoro-82M**, a free, open (Apache-2.0) neural text-to-speech model, using the voice `am_michael`. It runs offline on your computer, with no paid API or account. The model weights come from the npm package `kokoro-q8-shards` and the voices from `kokoro-js`. The setup steps are at the top of `scripts/generate-voiceover.py`.
+
+* **Change the voice:** run the script with `--voice`, for example `bm_george` (British male) or `af_heart` (American female). Then run `npm run render`.
+* **Change the wording:** edit `src/data/narration.json`, then run the script again. Each line is paced automatically to fit its time slot.
+* **Use your own recordings:** replace the files, keeping the names `vo-01.wav` … `vo-10.wav`. See [NARRATION.md](NARRATION.md) for timings and tips.
+
 ### Changing narration text or timing
 Edit **`src/data/narration.json`**. It is the single source of truth for:
 * the burned-in subtitles,
@@ -127,11 +134,12 @@ ionet-film/
 │                                 screens/flood map, flares, grain, letterbox, subtitles
 ├── scripts/
 │   ├── generate-soundtrack.mjs  → public/audio/score.wav
+│   ├── generate-voiceover.py    → public/voiceover/vo-01.wav … vo-10.wav
 │   └── generate-subtitles.mjs   → subtitles/*.srt, *.vtt
 ├── subtitles/                 ← generated subtitle files
 ├── public/photos/             ← supplied photographs (graded in code)
 ├── public/ionet-logo.png      ← official io.net logo
-├── public/voiceover/          ← put your recordings here
+├── public/voiceover/          ← narration, one WAV per line (AI-generated; replaceable)
 ├── NARRATION.md               ← narration script with timings and recording tips
 └── out/                       ← rendered video (git-ignored)
 ```

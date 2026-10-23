@@ -19,13 +19,19 @@ The timings below are fixed by `src/data/narration.json`. That file also drives 
 
 **On-screen end card:** **io.net**, then *Distributed GPU compute. Connected for what's next.*
 
+## The included voiceover
+
+The film ships with an AI-generated narration in `public/voiceover/vo-01.wav` … `vo-10.wav`. It was made with the free, open Kokoro-82M model (voice `am_michael`) by `scripts/generate-voiceover.py`. The script speaks "io.net" as "eye oh dot net" and paces each line to fit the timings above.
+
+To use a human voice instead, record the lines and replace those files, keeping the same names.
+
 ## Recording tips (no special equipment needed)
 
 1. Record in a quiet room with soft furnishings, such as a closet full of clothes. A phone held 20–30 cm from your mouth works well.
 2. Record each line as its own file, with about 0.2 s of silence at the start.
 3. Each line must fit its slot (Ends minus Starts). Read a little slower than feels natural.
 4. Export as WAV (or MP3), name the files `vo-01.wav` … `vo-10.wav`, and put them in `public/voiceover/`.
-5. In `src/config.ts`, set `VOICEOVER.mode` to `'lines'`, then run `npm run render`.
+5. Run `npm run render`. `VOICEOVER.mode` is already set to `'lines'` in `src/config.ts`.
 
 Free tools: **Audacity** (desktop) can record, trim and export WAV. Most phone voice-memo apps can export audio too.
 
