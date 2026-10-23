@@ -5,6 +5,8 @@
 // volume for a couple of seconds whenever a clip ends. That made lines starting right after
 // another line come out much quieter. One steady track avoids it.
 //
+// The narration is also loudness-normalised (-15 LUFS) so it sits clearly above the music.
+//
 // Uses the ffmpeg bundled with Remotion (`npx remotion ffmpeg`), so nothing extra to install.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -31,7 +33,7 @@ if (lines.length < n.lines.length) {
 
 const inputs = lines.flatMap((l) => ['-i', l.file]);
 const delays = lines.map((l, i) => `[${i}]aresample=48000,aformat=channel_layouts=stereo,adelay=${Math.round((l.from / n.fps) * 1000)}:all=1[a${i}]`);
-const mix = `${lines.map((_, i) => `[a${i}]`).join('')}amix=inputs=${lines.length}:normalize=0:dropout_transition=0,apad=whole_dur=${duration},atrim=0:${duration}[out]`;
+const mix = `${lines.map((_, i) => `[a${i}]`).join('')}amix=inputs=${lines.length}:normalize=0:dropout_transition=0,loudnorm=I=-15:TP=-1.5:LRA=7,aresample=48000,apad=whole_dur=${duration},atrim=0:${duration}[out]`;
 const out = path.join(dir, 'assembled.wav');
 
 execFileSync(

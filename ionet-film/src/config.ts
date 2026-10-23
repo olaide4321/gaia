@@ -37,7 +37,7 @@ export const SCORE = {
   enabled: true,
   // Music is automatically lowered (ducked) under the voice when a voiceover is enabled.
   volume: 0.9,
-  duckedVolume: 0.2,
+  duckedVolume: 0.16,
 };
 
 /** Burn subtitles into the video. An .srt file is also written to subtitles/. */
