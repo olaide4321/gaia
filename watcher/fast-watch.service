@@ -1,0 +1,14 @@
+[Unit]
+Description=SubsGigs fast watcher
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/home/ubuntu/gaia/watcher
+ExecStart=/usr/bin/python3 /home/ubuntu/gaia/watcher/fast_watch.py
+Restart=always
+RestartSec=5
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target
