@@ -1,4 +1,4 @@
-// Procedural score + sound design for "THE WORLD'S IDLE MACHINES".
+// Procedural background music + light sound design for "THE WORLD'S IDLE MACHINES".
 // Everything is synthesised from oscillators and noise — no samples, no downloads.
 // Output: public/audio/score.wav (48 kHz, 16-bit stereo, film length)
 import fs from 'node:fs';
@@ -83,9 +83,9 @@ class Biquad {
   }
 }
 
-// ── 1. Rain (Act 1, returns softly in Act 4) ──
+// ── 1. Light rain (opening) ──
 {
-  const gain = auto([[0, 0], [0.4, 0.5], [9.2, 0.5], [10.4, 0.12], [12, 0.0], [37.6, 0], [38.6, 0.16], [44, 0.1], [49.5, 0.04], [50.5, 0]]);
+  const gain = auto([[0, 0], [0.4, 0.28], [9.2, 0.26], [10.4, 0.06], [12, 0.0]]);
   const bL = new Biquad(), bR = new Biquad(), lL = new Biquad(), lR = new Biquad();
   for (let i = 0; i < N; i++) {
     const t = i / SR, g = gain(t);
@@ -122,217 +122,189 @@ const thunder = (t0, amp) => {
     add(i0 + j, s, s * 0.92, 0.5);
   }
 };
-thunder(fr(80), 0.55);
-thunder(fr(212), 0.38);
+thunder(fr(80), 0.2); // one distant roll, timed with the lightning
 
-// ── 3. Low drone bed ──
-{
-  const gain = auto([[0, 0], [2, 0.16], [9.5, 0.22], [10.5, 0.14], [21.5, 0.2], [22.3, 0.08], [37, 0.1], [38.5, 0.05], [49, 0.06], [50, 0.12], [57.5, 0.12], [59.9, 0]]);
-  const notes = auto([[0, 38], [21.9, 38], [22, 38], [60, 38]]); // D1/D2 pedal
-  const lp = [new OnePole(), new OnePole()];
-  const ph = [0, 0, 0, 0];
-  for (let i = 0; i < N; i++) {
-    const t = i / SR, g = gain(t);
-    const f = mtof(notes(t));
-    const det = [1, 1.004, 1.5, 2.003];
-    let sl = 0, sr = 0;
-    for (let k = 0; k < 4; k++) {
-      ph[k] = (ph[k] + (f * det[k]) / SR) % 1;
-      const saw = ph[k] * 2 - 1;
-      if (k % 2) sr += saw; else sl += saw;
-    }
-    const cut = 140 + 90 * Math.sin(t * 0.4) ** 2;
-    const yl = lp[0].lp(sl, cut), yr = lp[1].lp(sr, cut);
-    add(i, yl * g, yr * g, 0.25);
-  }
-}
-
-// ── 4. Heartbeat pulse (Act 1 suspense) ──
-const thump = (t0, amp, f0 = 55) => {
-  const i0 = Math.floor(W(t0) * SR);
-  const len = Math.floor(SR * 0.5);
-  let ph = 0;
-  for (let j = 0; j < len; j++) {
-    const t = j / SR;
-    const f = f0 + 60 * Math.exp(-t / 0.03);
-    ph += (2 * Math.PI * f) / SR;
-    const s = Math.sin(ph) * Math.exp(-t / 0.14) * amp;
-    add(i0 + j, s, s, 0.1);
-  }
-};
-for (let t = 3.4; t < 9.6; t += 0.86) {
-  const a = 0.25 + (t - 3.4) * 0.04;
-  thump(t, a);
-  thump(t + 0.22, a * 0.6);
-}
-
-// ── 5. Act 2: electrical hum, ticking time, sparse piano ──
-{
-  const gain = auto([[9.8, 0], [10.6, 0.05], [21, 0.06], [22, 0]]);
-  for (let i = Math.floor(W(9.8) * SR); i < W(22) * SR; i++) {
-    const t = i / SR, g = gain(t);
-    const s = (Math.sin(2 * Math.PI * 100 * t) * 0.6 + Math.sin(2 * Math.PI * 200 * t) * 0.25 + Math.sin(2 * Math.PI * 300 * t) * 0.1) * g;
-    add(i, s, s * 0.9, 0.1);
-  }
-  for (let t = 10.4; t < 21.6; t += 0.5) {
-    const i0 = Math.floor(W(t) * SR);
-    const loud = 0.05 + (t > 18 ? (t - 18) * 0.02 : 0);
-    const bp = new Biquad();
-    for (let j = 0; j < SR * 0.03; j++) {
-      const s = bp.bp(noise(), 3000, 4) * Math.exp(-j / (SR * 0.004)) * loud * 3;
-      add(i0 + j, s * 0.7, s, 0.4);
-    }
-  }
-}
-const piano = (t0, midi, amp, pan = 0.5, decay = 2.6) => {
-  const i0 = Math.floor(W(t0) * SR);
+// ── Instruments ──
+/** Soft felt-piano note at an actual film time (seconds). */
+const keys = (t0, midi, amp, pan = 0.5, decay = 2.6) => {
+  const i0 = Math.floor(t0 * SR);
   const f = mtof(midi);
   const len = Math.floor(SR * decay * 2.2);
   for (let j = 0; j < len; j++) {
     const t = j / SR;
-    const env = Math.min(1, t / 0.004) * Math.exp(-t / decay);
+    const env = Math.min(1, t / 0.006) * Math.exp(-t / decay);
     const s =
       (Math.sin(2 * Math.PI * f * t) +
-        0.45 * Math.sin(2 * Math.PI * f * 2.001 * t) * Math.exp(-t / 0.9) +
-        0.2 * Math.sin(2 * Math.PI * f * 3.003 * t) * Math.exp(-t / 0.4) +
-        0.08 * Math.sin(2 * Math.PI * f * 4.2 * t) * Math.exp(-t / 0.15)) *
+        0.4 * Math.sin(2 * Math.PI * f * 2.001 * t) * Math.exp(-t / 0.9) +
+        0.15 * Math.sin(2 * Math.PI * f * 3.003 * t) * Math.exp(-t / 0.4) +
+        0.05 * Math.sin(2 * Math.PI * f * 4.2 * t) * Math.exp(-t / 0.15)) *
       env * amp;
     add(i0 + j, s * (1 - pan) * 1.4, s * pan * 1.4, 0.55);
   }
 };
-// melancholic D-minor motif, sparse
-[[10.5, 62], [11.6, 65], [12.9, 69], [14.4, 67], [15.6, 62], [17.0, 65], [18.2, 70], [19.6, 69], [20.6, 64]].forEach(([t, m], k) =>
-  piano(t, m, 0.12, k % 2 ? 0.35 : 0.65),
-);
-[[10.5, 38], [14.4, 34], [18.2, 41]].forEach(([t, m]) => piano(t, m + 12, 0.1, 0.5, 4));
+/** The same note placed on the design timeline (for cues tied to picture events). */
+const piano = (designT0, midi, amp, pan, decay) => keys(W(designT0), midi, amp, pan, decay);
 
-// ── 6. Transition whooshes / reverse swells ──
-const whoosh = (tEnd, dur, amp) => {
+/** Warm, slow-attack pad chord between two actual times. */
+const pad = (t0, t1, midis, amp, cut, att = 0.9, rel = 1.4) => {
+  const i0 = Math.floor(t0 * SR), i1 = Math.min(N, Math.floor((t1 + rel) * SR));
+  const voices = [];
+  midis.forEach((m) => {
+    for (let d = 0; d < 3; d++) voices.push({f: mtof(m) * (1 + (d - 1) * 0.003), ph: rnd(), side: voices.length % 2});
+  });
+  const fl = [new Biquad(), new Biquad()];
+  for (let i = i0; i < i1; i++) {
+    const t = i / SR;
+    const env = Math.min(1, (t - t0) / att) * (t > t1 ? Math.exp(-(t - t1) / (rel / 3)) : 1);
+    let l = 0, r = 0;
+    for (const v of voices) {
+      v.ph = (v.ph + v.f / SR) % 1;
+      const tri = 1 - 4 * Math.abs(v.ph - 0.5); // triangle: softer than a saw
+      if (v.side) r += tri; else l += tri;
+    }
+    const k = (env * amp) / voices.length;
+    add(i, fl[0].lp(l, cut, 0.7) * k * 2, fl[1].lp(r, cut, 0.7) * k * 2, 0.6);
+  }
+};
+
+/** Round sine bass note. */
+const bass = (t0, dur, midi, amp) => {
+  const i0 = Math.floor(t0 * SR), len = Math.floor((dur + 0.6) * SR), f = mtof(midi);
+  for (let j = 0; j < len; j++) {
+    const t = j / SR;
+    const env = Math.min(1, t / 0.08) * (t > dur ? Math.exp(-(t - dur) / 0.2) : 1);
+    const s = (Math.sin(2 * Math.PI * f * t) + 0.25 * Math.sin(4 * Math.PI * f * t)) * env * amp;
+    add(i0 + j, s, s, 0.05);
+  }
+};
+
+/** Very soft kick, for a gentle pulse. */
+const kick = (t0, amp) => {
+  const i0 = Math.floor(t0 * SR), len = Math.floor(SR * 0.35);
+  let ph = 0;
+  for (let j = 0; j < len; j++) {
+    const t = j / SR;
+    ph += (2 * Math.PI * (48 + 50 * Math.exp(-t / 0.025))) / SR;
+    const s = Math.sin(ph) * Math.exp(-t / 0.11) * amp;
+    add(i0 + j, s, s, 0.05);
+  }
+};
+
+/** Light shaker tick. */
+const shaker = (t0, amp, pan) => {
+  const i0 = Math.floor(t0 * SR), bp = new Biquad();
+  for (let j = 0; j < SR * 0.06; j++) {
+    const t = j / SR;
+    const s = bp.bp(noise(), 7000, 1.2) * Math.min(1, t / 0.004) * Math.exp(-t / 0.018) * amp;
+    add(i0 + j, s * (1 - pan) * 1.4, s * pan * 1.4, 0.2);
+  }
+};
+
+/** Bell / pluck for the melody. */
+const bell = (t0, midi, amp, pan = 0.5) => {
+  const i0 = Math.floor(t0 * SR), f = mtof(midi), len = Math.floor(SR * 3);
+  for (let j = 0; j < len; j++) {
+    const t = j / SR;
+    const env = Math.min(1, t / 0.003) * Math.exp(-t / 1.1);
+    const s = (Math.sin(2 * Math.PI * f * t) + 0.3 * Math.sin(2 * Math.PI * f * 3.01 * t) * Math.exp(-t / 0.3) + 0.12 * Math.sin(2 * Math.PI * f * 5.4 * t) * Math.exp(-t / 0.1)) * env * amp;
+    add(i0 + j, s * (1 - pan) * 1.4, s * pan * 1.4, 0.7);
+  }
+};
+
+// ── 3. Background music: calm and refreshing, D major, start to end ──
+// Bars are 2.8 s (≈86 BPM, 4 beats of 0.7 s) so section changes land on the act changes
+// of the 40 s cut (8.4, 14, 25.2, 33.6 s). Progression: D – A – Bm – G.
+{
+  const BAR = 2.8, BEAT = BAR / 4;
+  const CHORDS = [
+    {root: 38, pad: [50, 57, 62, 66], arp: [62, 66, 69, 74]}, // D
+    {root: 33, pad: [45, 57, 61, 64], arp: [61, 64, 69, 73]}, // A
+    {root: 35, pad: [47, 54, 59, 62], arp: [59, 62, 66, 71]}, // Bm
+    {root: 31, pad: [43, 55, 59, 62], arp: [59, 62, 67, 71]}, // G
+  ];
+  const end = DUR;
+  const bars = Math.ceil(end / BAR);
+  // a simple, singable pentatonic melody over 4 bars (beat offset, midi, velocity)
+  const MELODY = [
+    [0, 78, 1], [1, 81, 0.8], [2, 83, 0.9], [3, 81, 0.7],
+    [4, 76, 0.9], [6, 78, 0.8], [7, 81, 0.7],
+    [8, 83, 1], [9, 81, 0.8], [10, 78, 0.8], [11, 76, 0.7],
+    [12, 74, 0.9], [14, 76, 0.7],
+  ];
+  for (let b = 0; b < bars; b++) {
+    const t0 = b * BAR;
+    const last = t0 + BAR >= end - 0.1;
+    const c = last ? CHORDS[0] : CHORDS[b % 4];
+    const lift = t0 >= 14 && t0 < 33.6; // the discovery / possibility stretch
+    // pad from the second bar, opening up a little when the music lifts
+    if (t0 >= 2.8) pad(t0, last ? end - 1.2 : t0 + BAR, lift ? [...c.pad, c.pad[2] + 12] : c.pad, lift ? 0.2 : 0.16, lift ? 2000 : 1400);
+    // bass from 8.4 s
+    if (t0 >= 8.3 && !last) bass(t0, BAR - 0.15, c.root, 0.07);
+    if (last) bass(t0, end - t0 - 1.0, 38, 0.07);
+    // piano: quarter notes at first, gentle eighths once the story moves
+    const step = t0 < 8.3 || t0 >= 33.6 ? BEAT : BEAT / 2;
+    for (let k = 0, t = t0; t < t0 + BAR - 0.01 && t < end - 1.6; t += step, k++) {
+      const note = c.arp[k % 4] + (step < BEAT && k % 8 >= 4 ? 12 : 0);
+      keys(t + 0.02, note, (step < BEAT ? 0.04 : 0.05) * (k % 2 ? 0.8 : 1), k % 2 ? 0.35 : 0.65, 1.5);
+    }
+    if (last) keys(t0 + 0.02, 74, 0.06, 0.5, 3.2), keys(t0 + 0.04, 81, 0.04, 0.3, 3.2);
+    // soft pulse + shaker during the lift
+    if (lift) {
+      for (let q = 0; q < 4; q++) {
+        if (q % 2 === 0) kick(t0 + q * BEAT, 0.17);
+        shaker(t0 + q * BEAT + BEAT / 2, 0.05, q % 2 ? 0.3 : 0.7);
+      }
+    }
+    // melody over the lift, one 4-bar phrase at a time
+    if (lift) {
+      const phraseStart = 14 + Math.floor((t0 - 14) / (4 * BAR)) * 4 * BAR;
+      MELODY.forEach(([beat, m, v]) => {
+        const t = phraseStart + beat * BEAT;
+        if (t >= t0 && t < t0 + BAR && t < 33.5) bell(t, m, 0.05 * v, 0.4 + 0.2 * Math.sin(beat));
+      });
+    }
+  }
+}
+
+// ── 4. Gentle transition swells ──
+const whoosh = (designTEnd, dur, amp) => {
   const bp = new Biquad(), bp2 = new Biquad();
-  const i0 = Math.floor((W(tEnd) - dur) * SR);
+  const i0 = Math.floor((W(designTEnd) - dur) * SR);
   const len = Math.floor((dur + 0.6) * SR);
   for (let j = 0; j < len; j++) {
     const t = j / SR, x = t / dur;
     const env = x < 1 ? x ** 2.4 : Math.exp(-(t - dur) / 0.12);
-    const f = 300 + 4200 * Math.min(1, x) ** 2;
+    const f = 300 + 3000 * Math.min(1, x) ** 2;
     const s = bp.bp(noise(), f, 1.2) * env * amp;
     const s2 = bp2.bp(noise(), f * 1.1, 1.2) * env * amp;
     add(i0 + j, s, s2, 0.4);
   }
 };
-whoosh(fr(300), 1.2, 0.5);
-whoosh(fr(660), 1.6, 0.55);
-whoosh(fr(1140), 1.2, 0.4);
-whoosh(fr(1500), 1.4, 0.45);
+whoosh(fr(300), 1.0, 0.22);
+whoosh(fr(660), 1.3, 0.25);
+whoosh(fr(1140), 1.0, 0.18);
+whoosh(fr(1500), 1.2, 0.2);
 
-// ── 7. Impacts (sub boom + tail) ──
-const impact = (t0, amp) => {
-  thump(t0, amp * 1.2, 38);
-  const lp = new Biquad();
-  const i0 = Math.floor(W(t0) * SR);
-  for (let j = 0; j < SR * 3; j++) {
-    const t = j / SR;
-    const s = lp.lp(noise(), 900) * Math.exp(-t / 0.5) * amp * 0.5;
-    add(i0 + j, s, s, 0.8);
-  }
-};
-impact(fr(660), 0.55); // globe emerges
-impact(fr(1070), 0.65); // climax: all compute converges on Lagos
-impact(fr(1650), 0.7); // logo reveal
-
-// ── 8. Pads (supersaw chords with opening filter) ──
-const pad = (designT0, designT1, midis, amp, cutA, cutB, att = 1.2, rel = 1.8) => {
-  const t0 = W(designT0), t1 = W(designT1);
-  const i0 = Math.floor(t0 * SR), i1 = Math.floor((t1 + rel) * SR);
-  const voices = [];
-  midis.forEach((m) => {
-    for (let d = 0; d < 3; d++) voices.push({f: mtof(m) * (1 + (d - 1) * 0.0035), ph: rnd(), side: (voices.length % 2)});
-  });
-  const fl = [new Biquad(), new Biquad()];
-  for (let i = i0; i < i1 && i < N; i++) {
-    const t = i / SR;
-    const env = Math.min(1, (t - t0) / att) * (t > t1 ? Math.exp(-(t - t1) / (rel / 3)) : 1);
-    const cut = cutA + (cutB - cutA) * clamp01((t - t0) / (t1 - t0));
-    let l = 0, r = 0;
-    for (const v of voices) {
-      v.ph = (v.ph + v.f / SR) % 1;
-      const s = v.ph * 2 - 1;
-      if (v.side) r += s; else l += s;
-    }
-    l = fl[0].lp(l, cut, 0.8);
-    r = fl[1].lp(r, cut, 0.8);
-    const k = (env * amp) / voices.length;
-    add(i, l * k * 2, r * k * 2, 0.7);
-  }
-};
-// Act 3 — wonder rising: Dm → B♭ → F → C → (climax) Dm/A
-pad(22.0, 26.0, [50, 57, 62, 65], 0.32, 400, 1400);
-pad(26.0, 30.0, [46, 53, 58, 62, 65], 0.34, 900, 2000);
-pad(30.0, 33.5, [53, 57, 60, 65, 69], 0.36, 1200, 2600);
-pad(33.5, 35.6, [48, 55, 60, 64, 67], 0.38, 1600, 3800, 0.6, 0.4);
-pad(35.67, 38.2, [50, 57, 62, 65, 69, 74], 0.42, 3200, 1800, 0.05, 1.6);
-// Act 4 — hope: D → A → Bm → G
-pad(38.2, 41.2, [50, 57, 62, 66, 69], 0.26, 700, 1500);
-pad(41.2, 44.0, [45, 57, 61, 64, 69], 0.27, 1000, 1700);
-pad(44.0, 47.0, [47, 54, 59, 62, 66], 0.28, 1200, 2000);
-pad(47.0, 50.2, [43, 55, 59, 62, 67], 0.3, 1400, 2600);
-// Act 5 — resolution: G → A → D (long tail)
-pad(50.2, 52.8, [43, 55, 59, 62, 67, 71], 0.32, 1200, 2600);
-pad(52.8, 55.0, [45, 57, 61, 64, 69], 0.32, 1500, 3000);
-pad(55.0, 57.6, [38, 50, 57, 62, 66, 69, 74], 0.4, 3400, 1200, 0.05, 2.0);
-
-// ── 9. Act 3 ignition chimes (follow node ignition) & riser ──
+// ── 5. Picture cues: node ignition chimes, a soft lift into the climax, map and logo shimmer ──
 {
-  const scale = [62, 65, 67, 69, 72, 74, 77, 79, 81, 84];
-  const t0 = fr(660 + 36), t1 = fr(660 + 230);
+  const scale = [62, 64, 66, 69, 71, 74, 76, 78, 81, 83]; // D major pentatonic
+  const t0 = fr(660 + 104), t1 = fr(660 + 240);
   let k = 0;
   for (let t = t0; t < t1; t += 0.136) {
     const prog = (t - t0) / (t1 - t0);
-    const m = scale[(k * 3 + Math.floor(prog * 6)) % scale.length];
-    piano(t, m + 12, 0.035 + prog * 0.03, rnd(), 0.9);
+    piano(t, scale[(k * 3 + Math.floor(prog * 6)) % scale.length] + 12, 0.018 + prog * 0.015, rnd(), 0.8);
     k++;
   }
-  // pulses along the network during link growth
-  for (let t = fr(760); t < fr(1060); t += 0.272) {
-    const m = [74, 77, 81, 79][Math.floor(t * 3.7) % 4];
-    piano(t, m, 0.03, rnd(), 0.6);
-  }
-  // riser into climax
   const bp = new Biquad();
   const a = W(fr(990)), b = W(fr(1070));
-  let ph = 0;
   for (let i = Math.floor(a * SR); i < b * SR; i++) {
-    const t = i / SR, x = (t - a) / (b - a);
-    ph += (2 * Math.PI * (200 + 1400 * x * x)) / SR;
-    const s = (bp.bp(noise(), 600 + 6000 * x * x, 1.5) * 0.6 + Math.sin(ph) * 0.15) * x ** 2 * 0.5;
-    add(i, s, s, 0.5);
+    const x = (i / SR - a) / (b - a);
+    const s = bp.bp(noise(), 800 + 5000 * x * x, 1.5) * x ** 2 * 0.12;
+    add(i, s, s, 0.6);
   }
+  [74, 78, 81, 86].forEach((m, k) => piano(fr(1140 + 222) + k * 0.09, m, 0.045, 0.2 + k * 0.2, 2.2));
+  [[55.0, 74], [55.12, 78], [55.24, 81], [55.36, 86]].forEach(([t, m], k) => piano(t, m, 0.05, k % 2 ? 0.3 : 0.7, 2.8));
 }
-
-// ── 10. Act 4: soft arpeggio + data blips ──
-{
-  const prog = [[38.2, [62, 66, 69, 74]], [41.2, [61, 64, 69, 73]], [44.0, [59, 62, 66, 71]], [47.0, [59, 62, 67, 71]]];
-  prog.forEach(([start, notes], c) => {
-    const end = c < 3 ? prog[c + 1][0] : 50.2;
-    let k = 0;
-    for (let t = start; t < end - 0.05; t += 0.272) {
-      piano(t, notes[k % 4] + (k % 8 >= 4 ? 12 : 0), 0.05, k % 2 ? 0.3 : 0.7, 1.1);
-      k++;
-    }
-  });
-  for (let t = 38.6; t < 45.3; t += 0.136 + rnd() * 0.2) {
-    const i0 = Math.floor(W(t) * SR), f = 1800 + rnd() * 1600;
-    for (let j = 0; j < SR * 0.025; j++) {
-      const s = Math.sin((2 * Math.PI * f * j) / SR) * Math.exp(-j / (SR * 0.006)) * 0.025;
-      add(i0 + j, s * rnd(), s * rnd(), 0.3);
-    }
-  }
-  // map reveal shimmer
-  [74, 78, 81, 86].forEach((m, k) => piano(fr(1140 + 224) + k * 0.09, m, 0.06, 0.2 + k * 0.2, 2.2));
-}
-
-// ── 11. Logo shimmer ──
-[[55.0, 74], [55.12, 78], [55.24, 81], [55.36, 86], [56.6, 81], [56.75, 86]].forEach(([t, m], k) => piano(t, m, 0.06, k % 2 ? 0.3 : 0.7, 2.8));
 
 // ── Reverb (Freeverb-style) ──
 {

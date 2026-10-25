@@ -5,8 +5,8 @@ A 40-second cinematic film about **io.net**, built in code with [Remotion](https
 * 1920×1080 · 30 fps · 1,200 frames · H.264 MP4
 * The animated parts are code-generated (SVG, Canvas and CSS): the globe network, the dashboards and the flood map.
 * Nine photographs supplied by the project owner (in `public/photos/`) get a light, natural colour grade and slow camera moves.
-* The score and sound design are synthesised by a script (oscillators and noise). No audio samples.
-* Subtitles are burned in, and also exported as `.srt` and `.vtt`.
+* Calm, uplifting background music runs from start to finish, with light sound effects. It is all synthesised by a script (oscillators and noise), with no audio samples.
+* Large burned-in subtitles with key phrases in gold, also exported as `.srt` and `.vtt`.
 * The narration is voiced by the free, open Kokoro-82M AI voice model, generated offline (see [NARRATION.md](NARRATION.md)). You can swap in your own recordings.
 
 ## The story
@@ -64,8 +64,8 @@ Almost everything you'd want to change lives in **`src/config.ts`**:
 | Setting | What it does |
 |---|---|
 | `VOICEOVER.mode` | `'lines'` (default), `'none'` (eight files `public/voiceover/vo-01.wav` … `vo-08.wav`) or `'full'` (one file `public/voiceover/full.wav`) |
-| `SCORE.volume` / `duckedVolume` | Music level. The music is lowered automatically under the voiceover. |
-| `SUBTITLES.burnIn` | `false` for a clean picture (the `.srt` is still generated) |
+| `SCORE.volume` / `duckedVolume` | Music level, and the level it eases down to under each narration line, so the voice stays clear while the music stays audible. |
+| `SUBTITLES.burnIn` / `size` | `false` for a clean picture (the `.srt` is still generated); `size` is the font size in pixels. The gold words come from each line's `highlight` list in `src/data/narration.json`. |
 | `LOGO.file` | `'auto'` (default) detects `public/ionet-logo.svg`, `.png` or `.webp`. Until one exists, a typographic **placeholder** wordmark is shown. |
 | `LOGO.tint` | `'original'` keeps the logo's colours; `'ivory'` recolours it to the film's ivory |
 
@@ -115,7 +115,13 @@ Edit **`src/data/narration.json`**. Each act there has a slot (`from`/`to`) and 
 * the act boundaries used by the film and the soundtrack.
 
 ### Changing the music
-Edit `scripts/generate-soundtrack.mjs`, then run `npm run audio`. Its sections are commented: rain, thunder, drone, heartbeat, idle hum, piano, whooshes, impacts, pads, ignition chimes, hope arpeggio and logo shimmer.
+Edit `scripts/generate-soundtrack.mjs`, then run `npm run audio`. The background music is a calm piece in D major at about 86 BPM (chords D, A, Bm, G):
+* **Opening:** soft piano.
+* **From 8 s:** warm pads and bass join.
+* **14–33 s:** a gentle pulse and a bell melody join.
+* **Ending:** it resolves on D.
+
+The instruments and sections are commented in the script, alongside light rain, soft transition swells, ignition chimes and the logo shimmer.
 
 ---
 

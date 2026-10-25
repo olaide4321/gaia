@@ -5,6 +5,7 @@ import {Globe} from '../components/Globe';
 import {FloodMap} from '../components/Screen';
 import {Flare, Starfield} from '../components/Flare';
 import {BrandLogo} from '../components/BrandLogo';
+import {LETTERBOX} from '../components/Frame';
 import {Photo} from '../components/Photo';
 import {C, FONT} from '../theme';
 import {envelope, lerp} from '../util';
@@ -76,13 +77,13 @@ export const Act5Reveal: React.FC = () => {
             position: 'absolute',
             left: 0,
             right: 0,
-            bottom: 158,
+            top: LETTERBOX + 28,
             textAlign: 'center',
             fontFamily: FONT.sans,
-            fontSize: 15,
+            fontSize: 17,
             letterSpacing: 2,
             color: C.ivoryDim,
-            opacity: envelope(f, 225, 300, 20, 1) * 0.7,
+            opacity: envelope(f, 200, 300, 20, 1) * 0.75,
           }}
         >
           Dramatization. The engineer's story, his project and all on-screen data are fictional.

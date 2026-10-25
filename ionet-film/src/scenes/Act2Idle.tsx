@@ -40,7 +40,7 @@ export const Act2Idle: React.FC = () => {
         <Photo src="gpu-racks.jpg" start={100} end={195} grade="warm" position="40% 50%" from={{s: 1.02, x: 30, y: 0}} to={{s: 1.12, x: -40, y: 0}} shade={0.1} />
         <Haze opacity={0.2} seed={9} />
         <LocationTag start={106} end={191} place="Data facility · Seoul" detail="11:14 LOCAL · CAPACITY UNUSED" />
-        <Readout label="IDLE FOR" value={clock(14 * 3600 + 22 * 60, f)} x={1380} y={760} o={envelope(f, 118, 191, 12, 10)} />
+        <Readout label="IDLE FOR" value={clock(14 * 3600 + 22 * 60, f)} x={1380} y={520} o={envelope(f, 118, 191, 12, 10)} />
       </AbsoluteFill>
 
       {/* Shot D — montage: idle machines multiply across the world */}

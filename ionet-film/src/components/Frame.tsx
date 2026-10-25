@@ -20,31 +20,76 @@ export const Letterbox: React.FC = () => {
   );
 };
 
-/** Burned-in subtitles, driven by src/data/narration.json (same source as the .srt file). */
+/** Splits a line into plain and highlighted parts, using the line's "highlight" phrases. */
+const splitHighlights = (text: string, phrases: string[]) => {
+  const parts: {t: string; hl: boolean}[] = [];
+  let rest = text;
+  while (rest.length) {
+    const hits = phrases.map((p) => ({p, i: rest.indexOf(p)})).filter((h) => h.i >= 0).sort((x, y) => x.i - y.i);
+    if (!hits.length) {
+      parts.push({t: rest, hl: false});
+      break;
+    }
+    const {p, i} = hits[0];
+    if (i > 0) parts.push({t: rest.slice(0, i), hl: false});
+    parts.push({t: p, hl: true});
+    rest = rest.slice(i + p.length);
+  }
+  return parts;
+};
+
+/**
+ * Burned-in subtitles, driven by src/data/narration.json (same source as the .srt file).
+ * Large ivory text on a soft dark backing, with each line's key phrases in gold.
+ */
 export const Subtitles: React.FC = () => {
   const frame = useFrame();
   if (!SUBTITLES.burnIn) return null;
   const line = narration.lines.find((l) => frame >= l.from && frame < l.to);
   if (!line) return null;
   const o = envelope(frame, line.from, line.to, 8, 8);
+  const rise = lerp(frame, [line.from, line.from + 10], [14, 0]);
   return (
     <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', pointerEvents: 'none'}}>
       <div
         style={{
-          marginBottom: LETTERBOX / 2 - 26,
+          marginBottom: LETTERBOX + 34,
           opacity: o,
+          transform: `translateY(${rise}px)`,
           fontFamily: FONT.sans,
-          fontWeight: 400,
-          fontSize: 34,
-          letterSpacing: 0.4,
+          fontWeight: 600,
+          fontSize: SUBTITLES.size,
+          letterSpacing: 0.2,
           color: C.ivory,
           textAlign: 'center',
-          maxWidth: 1780,
-          lineHeight: 1.25,
-          textShadow: '0 2px 12px rgba(0,0,0,0.9)',
+          maxWidth: 1560,
+          lineHeight: 1.3,
+          padding: '14px 34px 16px',
+          borderRadius: 18,
+          background: 'linear-gradient(180deg, rgba(14,12,10,0.62), rgba(14,12,10,0.72))',
+          boxShadow: '0 10px 40px rgba(0,0,0,0.35)',
+          textShadow: '0 2px 10px rgba(0,0,0,0.6)',
         }}
       >
-        {line.text}
+        {splitHighlights(line.text, line.highlight ?? []).map((part, i) =>
+          part.hl ? (
+            <span
+              key={i}
+              style={{
+                background: `linear-gradient(90deg, ${C.goldBright}, ${C.amber})`,
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                color: 'transparent',
+                textShadow: 'none',
+                filter: 'drop-shadow(0 0 10px rgba(243,201,107,0.35))',
+              }}
+            >
+              {part.t}
+            </span>
+          ) : (
+            <span key={i}>{part.t}</span>
+          ),
+        )}
       </div>
     </AbsoluteFill>
   );

@@ -36,13 +36,17 @@ export const VOICEOVER: {
 export const SCORE = {
   enabled: true,
   // Music is automatically lowered (ducked) under the voice when a voiceover is enabled.
-  volume: 0.9,
-  duckedVolume: 0.16,
+  volume: 0.8,
+  duckedVolume: 0.22,
 };
 
-/** Burn subtitles into the video. An .srt file is also written to subtitles/. */
+/**
+ * Burn subtitles into the video. An .srt file is also written to subtitles/.
+ * Key phrases listed under "highlight" in src/data/narration.json are shown in gold.
+ */
 export const SUBTITLES = {
   burnIn: true,
+  size: 48, // font size in pixels
 };
 
 /**
