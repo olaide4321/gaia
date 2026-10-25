@@ -10,6 +10,7 @@ import {Act5Reveal} from './scenes/Act5Reveal';
 import {ColorGrade, FilmGrain, Vignette} from './components/Atmosphere';
 import {Letterbox, Subtitles} from './components/Frame';
 import {C} from './theme';
+import {SceneTime} from './time';
 
 const OVERLAP = 15; // frames each act keeps playing under the next one (cross-dissolve)
 
@@ -37,7 +38,9 @@ export const Film: React.FC = () => {
         const last = act.to >= narration.durationInFrames;
         return (
           <Sequence key={act.id} from={act.from} durationInFrames={act.to - act.from + (last ? 0 : OVERLAP)} name={act.title}>
-            <Scene />
+            <SceneTime speed={act.designFrames / (act.to - act.from)}>
+              <Scene />
+            </SceneTime>
           </Sequence>
         );
       })}

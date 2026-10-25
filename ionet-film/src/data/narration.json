@@ -1,23 +1,21 @@
 {
   "fps": 30,
-  "durationInFrames": 1800,
+  "durationInFrames": 1200,
   "acts": [
-    {"id": "problem",     "title": "The Problem",              "from": 0,    "to": 300},
-    {"id": "idle",        "title": "The Invisible Resources",  "from": 300,  "to": 660},
-    {"id": "discovery",   "title": "The Discovery",            "from": 660,  "to": 1140},
-    {"id": "possibility", "title": "The Possibility",          "from": 1140, "to": 1500},
-    {"id": "reveal",      "title": "The Reveal",               "from": 1500, "to": 1800}
+    {"id": "problem",     "title": "The Problem",             "from": 0,    "to": 240,  "designFrames": 300},
+    {"id": "idle",        "title": "The Invisible Resources", "from": 240,  "to": 420,  "designFrames": 270},
+    {"id": "discovery",   "title": "The Discovery",           "from": 420,  "to": 780,  "designFrames": 480},
+    {"id": "possibility", "title": "The Possibility",         "from": 780,  "to": 990,  "designFrames": 364},
+    {"id": "reveal",      "title": "The Reveal",              "from": 990,  "to": 1200, "designFrames": 300}
   ],
   "lines": [
-    {"id": "vo-01", "act": "problem",     "from": 24,   "to": 132,  "text": "Humanity learned to build intelligence."},
-    {"id": "vo-02", "act": "problem",     "from": 140,  "to": 292,  "text": "But what happens when the world needs more computing power than it can afford?"},
-    {"id": "vo-03", "act": "idle",        "from": 318,  "to": 462,  "text": "Across the world, computing power sits unused,"},
-    {"id": "vo-04", "act": "idle",        "from": 466,  "to": 646,  "text": "while innovators struggle to access the resources they need."},
-    {"id": "vo-05", "act": "discovery",   "from": 690,  "to": 832,  "text": "What if these scattered resources could work together?"},
-    {"id": "vo-06", "act": "discovery",   "from": 864,  "to": 1124, "text": "io.net brings distributed GPU resources together through a decentralized computing network."},
-    {"id": "vo-07", "act": "possibility", "from": 1158, "to": 1330, "text": "Because the next breakthrough might not require building everything from scratch."},
-    {"id": "vo-08", "act": "possibility", "from": 1340, "to": 1490, "text": "It might begin with connecting what already exists."},
-    {"id": "vo-09", "act": "reveal",      "from": 1512, "to": 1612, "text": "The world doesn't just need more intelligence."},
-    {"id": "vo-10", "act": "reveal",      "from": 1618, "to": 1720, "text": "It needs more ways to power it."}
+    {"id": "vo-01", "act": "problem",     "from": 15,   "to": 100,  "text": "Humanity learned to build intelligence."},
+    {"id": "vo-02", "act": "problem",     "from": 106,  "to": 238,  "text": "But what happens when the world needs more computing power than it can afford?"},
+    {"id": "vo-03", "act": "idle",        "from": 249,  "to": 416,  "text": "Across the world, computing power sits unused, while innovators struggle to reach it."},
+    {"id": "vo-04", "act": "discovery",   "from": 438,  "to": 533,  "text": "What if these scattered resources could work together?"},
+    {"id": "vo-05", "act": "discovery",   "from": 543,  "to": 778,  "text": "io.net brings distributed GPU resources together through a decentralized computing network."},
+    {"id": "vo-06", "act": "possibility", "from": 798,  "to": 920,  "text": "The next breakthrough might begin with connecting what already exists."},
+    {"id": "vo-07", "act": "reveal",      "from": 1005, "to": 1094, "text": "The world doesn't just need more intelligence."},
+    {"id": "vo-08", "act": "reveal",      "from": 1098, "to": 1180, "text": "It needs more ways to power it."}
   ]
 }

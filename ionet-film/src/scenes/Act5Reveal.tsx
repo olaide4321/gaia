@@ -1,5 +1,6 @@
 import React from 'react';
-import {AbsoluteFill, useCurrentFrame} from 'remotion';
+import {AbsoluteFill} from 'remotion';
+import {useFrame} from '../time';
 import {Globe} from '../components/Globe';
 import {FloodMap} from '../components/Screen';
 import {Flare, Starfield} from '../components/Flare';
@@ -8,9 +9,9 @@ import {Photo} from '../components/Photo';
 import {C, FONT} from '../theme';
 import {envelope, lerp} from '../util';
 
-/** 50–60s · The Reveal — pull back to the glowing network, then the io.net end card. */
+/** The Reveal — pull back to the glowing network, then the io.net end card. */
 export const Act5Reveal: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const ease = (x: number) => 1 - (1 - x) ** 3;
   const r = lerp(f, [78, 170], [1100, 400], ease) * lerp(f, [150, 210], [1, 0.85]);
   const lon0 = lerp(f, [0, 300], [3.4, 46], (x) => x);
@@ -23,7 +24,7 @@ export const Act5Reveal: React.FC = () => {
   return (
     <AbsoluteFill style={{background: C.black}}>
       <AbsoluteFill style={{opacity: end}}>
-        <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 50%, #1a140e 0%, #060504 70%)'}} />
+        <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 50%, #3a3024 0%, #1a1611 75%)'}} />
         <Starfield frame={f + 500} opacity={lerp(f, [20, 90], [0, 0.7])} />
         <AbsoluteFill style={{opacity: globeO}}>
           <Globe frame={f + 500} cx={960} cy={540} r={r} lon0={lon0} tilt={tilt} dots={1} ignite={1.1} links={1.3} hub={1} labels={lerp(f, [60, 110], [0, 0.8]) * lerp(f, [140, 170], [1, 0])} rim={1} />

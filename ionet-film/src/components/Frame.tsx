@@ -1,15 +1,16 @@
 import React from 'react';
-import {AbsoluteFill, useCurrentFrame} from 'remotion';
+import {AbsoluteFill} from 'remotion';
+import {useFrame} from '../time';
 import {C, FONT} from '../theme';
 import {envelope, lerp} from '../util';
 import narration from '../data/narration.json';
 import {SUBTITLES} from '../config';
 
-export const LETTERBOX = 132; // ≈ 2.39:1 inside a 16:9 frame
+export const LETTERBOX = 96; // slim bars, ≈ 2.1:1 inside a 16:9 frame
 
 /** Cinematic letterbox bars that open at the start of the film. */
 export const Letterbox: React.FC = () => {
-  const frame = useCurrentFrame();
+  const frame = useFrame();
   const h = lerp(frame, [0, 40], [540, LETTERBOX]);
   return (
     <>
@@ -21,7 +22,7 @@ export const Letterbox: React.FC = () => {
 
 /** Burned-in subtitles, driven by src/data/narration.json (same source as the .srt file). */
 export const Subtitles: React.FC = () => {
-  const frame = useCurrentFrame();
+  const frame = useFrame();
   if (!SUBTITLES.burnIn) return null;
   const line = narration.lines.find((l) => frame >= l.from && frame < l.to);
   if (!line) return null;
@@ -59,7 +60,7 @@ export const Camera: React.FC<{
   shake?: number;
   origin?: string;
 }> = ({children, duration, start = 0, from = {s: 1, x: 0, y: 0}, to = {s: 1.08, x: 0, y: 0}, shake = 0, origin = '50% 50%'}) => {
-  const frame = useCurrentFrame();
+  const frame = useFrame();
   const t = (a: number, b: number) => lerp(frame, [start, start + duration], [a, b], (x) => x * (2 - x) * 0.5 + x * 0.5);
   const sx = shake * (Math.sin(frame / 23) * 0.6 + Math.sin(frame / 9.7) * 0.4);
   const sy = shake * (Math.cos(frame / 19) * 0.6 + Math.sin(frame / 11.3) * 0.4);
@@ -83,7 +84,7 @@ export const LocationTag: React.FC<{
   detail: string;
   align?: 'left' | 'right';
 }> = ({start, end, place, detail, align = 'left'}) => {
-  const frame = useCurrentFrame();
+  const frame = useFrame();
   const o = envelope(frame, start, end, 14, 14);
   const lineW = lerp(frame, [start, start + 24], [0, 120]);
   return (

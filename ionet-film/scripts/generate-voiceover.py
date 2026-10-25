@@ -1,7 +1,7 @@
 """Generate the narration voiceover with Kokoro-82M, a free, open (Apache-2.0) neural TTS model.
 
 Runs fully offline once the model files are on disk; no paid API or account is needed.
-Writes public/voiceover/vo-01.wav … vo-10.wav, one file per line in src/data/narration.json,
+Writes public/voiceover/vo-01.wav … vo-08.wav, one file per line in src/data/narration.json,
 each paced to fit inside its subtitle slot.
 
 Setup (one time), from the ionet-film folder:

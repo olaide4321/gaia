@@ -1,5 +1,6 @@
 import React from 'react';
-import {AbsoluteFill, useCurrentFrame} from 'remotion';
+import {AbsoluteFill} from 'remotion';
+import {useFrame} from '../time';
 import {Globe, NODES} from '../components/Globe';
 import {Flare, Starfield} from '../components/Flare';
 import {Haze} from '../components/Atmosphere';
@@ -10,9 +11,9 @@ import {envelope, lerp} from '../util';
 
 const D2R = Math.PI / 180;
 
-/** 22–38s · The Discovery — distributed GPU nodes ignite and connect across a dark globe. */
+/** The Discovery — distributed GPU nodes ignite and connect across a dark globe. */
 export const Act3Discovery: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const lon0 = lerp(f, [0, 495], [-48, 14], (x) => x);
   const tilt = 0.3;
   const r = lerp(f, [70, 200, 330, 495], [300, 370, 370, 392]);
@@ -37,7 +38,7 @@ export const Act3Discovery: React.FC = () => {
   const climax = lerp(f, [395, 425, 470], [0, 1, 0.35]);
 
   return (
-    <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 50%, #17120d 0%, #060504 70%)'}}>
+    <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 50%, #3a3024 0%, #1a1611 75%)'}}>
       <Starfield frame={f} opacity={lerp(f, [70, 120], [0, 0.8])} />
       <AbsoluteFill style={{opacity: globeIn, transform: `scale(${lerp(f, [0, 495], [1.0, 1.06], (x) => x)})`}}>
         <Globe frame={f} cx={cx} cy={cy} r={r} lon0={lon0} tilt={tilt} dots={dots} ignite={ignite} links={links} hub={hub} labels={lerp(f, [150, 210], [0, 1])} rim={lerp(f, [70, 130], [0.2, 1])} />

@@ -9,7 +9,7 @@
     "prepare-assets": "npm run audio && npm run subtitles && npm run voiceover",
     "studio": "npm run prepare-assets && remotion studio",
     "render": "npm run prepare-assets && remotion render IdleMachines out/the-worlds-idle-machines.mp4",
-    "still": "remotion still IdleMachines out/still.png --frame=900",
+    "still": "remotion still IdleMachines out/still.png --frame=600",
     "typecheck": "tsc --noEmit",
     "voiceover": "node scripts/assemble-voiceover.mjs"
   },

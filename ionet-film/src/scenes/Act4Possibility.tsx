@@ -1,5 +1,6 @@
 import React from 'react';
-import {AbsoluteFill, useCurrentFrame} from 'remotion';
+import {AbsoluteFill} from 'remotion';
+import {useFrame} from '../time';
 import {Camera} from '../components/Frame';
 import {Photo} from '../components/Photo';
 import {Flare} from '../components/Flare';
@@ -9,9 +10,9 @@ import {RainStreaks} from '../components/Rain';
 import {C} from '../theme';
 import {envelope, lerp} from '../util';
 
-/** 38–50s · The Possibility — his (fictional) workload runs; a flood-risk map appears. */
+/** The Possibility — his (fictional) workload runs; a flood-risk map appears. */
 export const Act4Possibility: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const progress = lerp(f, [0, 215], [0.23, 1], (x) => 1 - (1 - x) ** 2);
   const logs = lerp(f, [4, 200], [1, 5.2], (x) => x);
   const screen = <TrainingScreen frame={f} mode="running" progress={progress} logReveal={logs} />;
@@ -41,18 +42,12 @@ export const Act4Possibility: React.FC = () => {
         </Camera>
       </AbsoluteFill>
 
-      {/* Shot D1 — the stakes: rainwater on a Lagos road */}
-      <AbsoluteFill style={{opacity: envelope(f, 216, 262, 10, 12)}}>
-        <Photo src="lagos-rain-road.jpg" start={216} end={262} grade="warm" position="50% 60%" from={{s: 1.04, x: 0, y: 0}} to={{s: 1.12, x: 0, y: -12}} shade={0.15} />
-        <RainStreaks count={180} seed={12} opacity={0.25} speed={30} />
-      </AbsoluteFill>
-
       {/* Shot D — the flood-risk visualization */}
-      <AbsoluteFill style={{opacity: envelope(f, 252, 400, 12, 1), background: C.black}}>
-        <Camera start={252} duration={148} from={{s: 1.0, x: 0, y: 0}} to={{s: 1.1, x: 0, y: 0}}>
+      <AbsoluteFill style={{opacity: envelope(f, 216, 400, 12, 1), background: C.black}}>
+        <Camera start={216} duration={148} from={{s: 1.0, x: 0, y: 0}} to={{s: 1.1, x: 0, y: 0}}>
           <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center'}}>
             <div style={{transform: 'scale(0.98)', boxShadow: '0 0 220px rgba(232,138,42,0.35)'}}>
-              <FloodMap frame={f} reveal={lerp(f, [258, 340], [0, 1], (x) => x)} />
+              <FloodMap frame={f} reveal={lerp(f, [222, 304], [0, 1], (x) => x)} />
             </div>
           </AbsoluteFill>
         </Camera>

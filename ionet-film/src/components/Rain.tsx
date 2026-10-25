@@ -1,5 +1,5 @@
 import React from 'react';
-import {useCurrentFrame} from 'remotion';
+import {useFrame} from '../time';
 import {DrawCanvas} from './Canvas';
 
 /** Falling rain streaks. Deterministic per frame. */
@@ -12,7 +12,7 @@ export const RainStreaks: React.FC<{
   length?: number;
   color?: string;
 }> = ({count = 700, seed = 1, opacity = 0.5, speed = 38, wind = -0.18, length = 46, color = '244,234,215'}) => {
-  const frame = useCurrentFrame();
+  const frame = useFrame();
   return (
     <DrawCanvas
       width={1920}
@@ -53,7 +53,7 @@ export const GlassDroplets: React.FC<{count?: number; seed?: number; opacity?: n
   seed = 11,
   opacity = 0.9,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useFrame();
   return (
     <DrawCanvas
       width={1920}

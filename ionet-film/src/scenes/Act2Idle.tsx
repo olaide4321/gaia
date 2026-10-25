@@ -1,7 +1,7 @@
 import React from 'react';
-import {AbsoluteFill, random, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, random} from 'remotion';
+import {useFrame} from '../time';
 import {Camera, LocationTag} from '../components/Frame';
-import {ServerRack} from '../components/Hardware';
 import {Photo} from '../components/Photo';
 import {DustMotes, Haze} from '../components/Atmosphere';
 import {C, FONT} from '../theme';
@@ -22,9 +22,9 @@ const clock = (base: number, f: number) => {
   return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
 };
 
-/** 10–22s · The Invisible Resources — idle GPUs around the world. */
+/** The Invisible Resources — idle machines around the world. */
 export const Act2Idle: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   return (
     <AbsoluteFill style={{background: C.black}}>
       {/* Shot A — an office at night: rows of workstations, nobody using them */}
@@ -35,55 +35,17 @@ export const Act2Idle: React.FC = () => {
         <LocationTag start={8} end={108} place="Office · Toronto" detail="22:14 LOCAL · GPU UTILIZATION 0%" />
       </AbsoluteFill>
 
-      {/* Shot B — university lab, morning light, racks unused */}
-      <AbsoluteFill style={{opacity: envelope(f, 100, 215, 12, 12)}}>
-        <Camera start={100} duration={115} from={{s: 1.0, x: 0, y: 0}} to={{s: 1.1, x: -120, y: 0}}>
-          <AbsoluteFill style={{background: 'linear-gradient(180deg, #1a140e 0%, #0b0907 100%)'}} />
-          {/* light shafts through tall windows */}
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              style={{
-                position: 'absolute',
-                left: 200 + i * 520,
-                top: -200,
-                width: 220,
-                height: 1500,
-                transform: 'rotate(24deg)',
-                background: 'linear-gradient(180deg, rgba(243,201,107,0.30), rgba(232,138,42,0.04))',
-                filter: 'blur(26px)',
-              }}
-            />
-          ))}
-          <div style={{position: 'absolute', left: 120, top: 120, display: 'flex', gap: 40}}>
-            {[0, 1, 2, 3, 4].map((k) => (
-              <ServerRack key={k} frame={f} seed={k + 10} active={0.04} width={330} height={820} />
-            ))}
-          </div>
-          <DustMotes count={110} seed={14} opacity={0.95} />
-          {/* monitor with flat utilisation graph */}
-          <div style={{position: 'absolute', left: 1180, top: 640, width: 560, height: 250, background: '#0d0b09', border: '10px solid #050404', borderRadius: 8, fontFamily: FONT.mono, color: C.ivoryDim, padding: 20, boxSizing: 'border-box'}}>
-            <div style={{fontSize: 15, letterSpacing: 4, color: C.gold}}>CLUSTER LOAD · LAST 24H</div>
-            <svg width={500} height={150} style={{marginTop: 10}}>
-              <line x1={0} x2={500} y1={130} y2={130} stroke={C.smoke} />
-              <polyline fill="none" stroke={C.amber} strokeWidth={3} points={new Array(50).fill(0).map((_, i) => `${i * 10},${126 - (random(`gl${i}`) < 0.1 ? 14 : 2)}`).join(' ')} />
-            </svg>
-          </div>
-        </Camera>
-        <LocationTag start={110} end={210} place="University lab · Bengaluru" detail="07:44 LOCAL · 4% LOAD" align="right" />
-      </AbsoluteFill>
-
       {/* Shot C — data facility: racks of GPUs, idle */}
-      <AbsoluteFill style={{opacity: envelope(f, 205, 300, 10, 12)}}>
-        <Photo src="gpu-racks.jpg" start={205} end={300} grade="warm" position="40% 50%" from={{s: 1.02, x: 30, y: 0}} to={{s: 1.12, x: -40, y: 0}} shade={0.1} />
+      <AbsoluteFill style={{opacity: envelope(f, 100, 195, 10, 12)}}>
+        <Photo src="gpu-racks.jpg" start={100} end={195} grade="warm" position="40% 50%" from={{s: 1.02, x: 30, y: 0}} to={{s: 1.12, x: -40, y: 0}} shade={0.1} />
         <Haze opacity={0.2} seed={9} />
-        <LocationTag start={212} end={296} place="Data facility · Seoul" detail="11:14 LOCAL · CAPACITY UNUSED" />
-        <Readout label="IDLE FOR" value={clock(14 * 3600 + 22 * 60, f)} x={1380} y={760} o={envelope(f, 225, 296, 12, 10)} />
+        <LocationTag start={106} end={191} place="Data facility · Seoul" detail="11:14 LOCAL · CAPACITY UNUSED" />
+        <Readout label="IDLE FOR" value={clock(14 * 3600 + 22 * 60, f)} x={1380} y={760} o={envelope(f, 118, 191, 12, 10)} />
       </AbsoluteFill>
 
       {/* Shot D — montage: idle machines multiply across the world */}
-      <AbsoluteFill style={{opacity: envelope(f, 290, 380, 10, 1)}}>
-        <IdleGrid f={f - 290} />
+      <AbsoluteFill style={{opacity: envelope(f, 185, 290, 10, 1)}}>
+        <IdleGrid f={f - 185} />
       </AbsoluteFill>
     </AbsoluteFill>
   );
@@ -128,9 +90,9 @@ const IdleGrid: React.FC<{f: number}> = ({f}) => {
     }
   }
   return (
-    <AbsoluteFill style={{background: C.black}}>
+    <AbsoluteFill style={{background: '#1a1611'}}>
       <AbsoluteFill style={{transform: `scale(${zoom})`}}>{tiles}</AbsoluteFill>
-      <AbsoluteFill style={{background: `radial-gradient(ellipse at center, rgba(0,0,0,0) 30%, rgba(6,5,4,${lerp(f, [30, 75], [0.4, 1])}) 75%)`}} />
+      <AbsoluteFill style={{background: `radial-gradient(ellipse at center, rgba(0,0,0,0) 30%, rgba(26,22,17,${lerp(f, [30, 75], [0.3, 1])}) 75%)`}} />
     </AbsoluteFill>
   );
 };

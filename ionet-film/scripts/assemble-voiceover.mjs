@@ -1,4 +1,4 @@
-// Combines the per-line narration files (public/voiceover/vo-01.wav … vo-10.wav) into one
+// Combines the per-line narration files (public/voiceover/vo-01.wav … vo-08.wav) into one
 // continuous, film-length track: public/voiceover/assembled.wav.
 //
 // Why: Remotion mixes each <Audio> clip as a separate input, and the mixer re-balances its

@@ -1,6 +1,6 @@
 // Procedural score + sound design for "THE WORLD'S IDLE MACHINES".
 // Everything is synthesised from oscillators and noise — no samples, no downloads.
-// Output: public/audio/score.wav (48 kHz, 16-bit stereo, 60 s)
+// Output: public/audio/score.wav (48 kHz, 16-bit stereo, film length)
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -10,7 +10,21 @@ const narration = JSON.parse(fs.readFileSync(path.join(root, 'src/data/narration
 const SR = 48000;
 const DUR = narration.durationInFrames / narration.fps;
 const N = Math.round(SR * DUR);
-const fr = (frame) => frame / narration.fps; // frames → seconds
+// The score is composed on a "design" timeline: the original 60 s cut, with acts ending at
+// 10, 22, 38, 50 and 60 s. W() maps any design time onto the film's actual act boundaries
+// (from narration.json), so every cue lands on the matching moment of the current edit.
+const DESIGN_ACT_ENDS = [0, 10, 22, 38, 50, 60];
+const ACTUAL_ACT_ENDS = [0, ...narration.acts.map((a) => a.to / narration.fps)];
+const W = (t) => {
+  for (let k = 1; k < DESIGN_ACT_ENDS.length; k++) {
+    if (t <= DESIGN_ACT_ENDS[k] || k === DESIGN_ACT_ENDS.length - 1) {
+      const [d0, d1, a0, a1] = [DESIGN_ACT_ENDS[k - 1], DESIGN_ACT_ENDS[k], ACTUAL_ACT_ENDS[k - 1], ACTUAL_ACT_ENDS[k]];
+      return a0 + ((t - d0) * (a1 - a0)) / (d1 - d0);
+    }
+  }
+  return t;
+};
+const fr = (frame) => frame / narration.fps; // design frames → design seconds
 
 const L = new Float32Array(N);
 const R = new Float32Array(N);
@@ -28,7 +42,8 @@ const smooth = (x) => {
   return t * t * (3 - 2 * t);
 };
 /** piecewise-linear automation: pts = [[t, v], ...] */
-const auto = (pts) => (t) => {
+const auto = (designPts) => (t) => {
+  const pts = designPts.map(([dt, v]) => [W(dt), v]);
   if (t <= pts[0][0]) return pts[0][1];
   for (let i = 1; i < pts.length; i++) {
     if (t <= pts[i][0]) {
@@ -81,8 +96,8 @@ class Biquad {
   }
   // individual drops / ticks on the window
   for (let k = 0; k < 900; k++) {
-    const t = rnd() * 12;
-    if (gain(t) < 0.05 && !(t > 38 && t < 50)) continue;
+    const t = W(rnd() * 12);
+    if (gain(t) < 0.05) continue;
     const i0 = Math.floor(t * SR), f = 2500 + rnd() * 4000, pan = rnd(), amp = 0.04 + rnd() * 0.08;
     const len = Math.floor(SR * 0.012);
     for (let j = 0; j < len; j++) {
@@ -97,7 +112,7 @@ class Biquad {
 const thunder = (t0, amp) => {
   const lp1 = new Biquad(), lp2 = new Biquad(), crack = new Biquad();
   const len = Math.floor(SR * 6);
-  const i0 = Math.floor(t0 * SR);
+  const i0 = Math.floor(W(t0) * SR);
   for (let j = 0; j < len; j++) {
     const t = j / SR;
     const env = (1 - Math.exp(-t / 0.05)) * Math.exp(-t / 1.6) * (0.7 + 0.3 * Math.sin(t * 7 + Math.sin(t * 3) * 2));
@@ -134,7 +149,7 @@ thunder(fr(212), 0.38);
 
 // ── 4. Heartbeat pulse (Act 1 suspense) ──
 const thump = (t0, amp, f0 = 55) => {
-  const i0 = Math.floor(t0 * SR);
+  const i0 = Math.floor(W(t0) * SR);
   const len = Math.floor(SR * 0.5);
   let ph = 0;
   for (let j = 0; j < len; j++) {
@@ -154,13 +169,13 @@ for (let t = 3.4; t < 9.6; t += 0.86) {
 // ── 5. Act 2: electrical hum, ticking time, sparse piano ──
 {
   const gain = auto([[9.8, 0], [10.6, 0.05], [21, 0.06], [22, 0]]);
-  for (let i = Math.floor(9.8 * SR); i < 22 * SR; i++) {
+  for (let i = Math.floor(W(9.8) * SR); i < W(22) * SR; i++) {
     const t = i / SR, g = gain(t);
     const s = (Math.sin(2 * Math.PI * 100 * t) * 0.6 + Math.sin(2 * Math.PI * 200 * t) * 0.25 + Math.sin(2 * Math.PI * 300 * t) * 0.1) * g;
     add(i, s, s * 0.9, 0.1);
   }
   for (let t = 10.4; t < 21.6; t += 0.5) {
-    const i0 = Math.floor(t * SR);
+    const i0 = Math.floor(W(t) * SR);
     const loud = 0.05 + (t > 18 ? (t - 18) * 0.02 : 0);
     const bp = new Biquad();
     for (let j = 0; j < SR * 0.03; j++) {
@@ -170,7 +185,7 @@ for (let t = 3.4; t < 9.6; t += 0.86) {
   }
 }
 const piano = (t0, midi, amp, pan = 0.5, decay = 2.6) => {
-  const i0 = Math.floor(t0 * SR);
+  const i0 = Math.floor(W(t0) * SR);
   const f = mtof(midi);
   const len = Math.floor(SR * decay * 2.2);
   for (let j = 0; j < len; j++) {
@@ -194,7 +209,7 @@ const piano = (t0, midi, amp, pan = 0.5, decay = 2.6) => {
 // ── 6. Transition whooshes / reverse swells ──
 const whoosh = (tEnd, dur, amp) => {
   const bp = new Biquad(), bp2 = new Biquad();
-  const i0 = Math.floor((tEnd - dur) * SR);
+  const i0 = Math.floor((W(tEnd) - dur) * SR);
   const len = Math.floor((dur + 0.6) * SR);
   for (let j = 0; j < len; j++) {
     const t = j / SR, x = t / dur;
@@ -214,7 +229,7 @@ whoosh(fr(1500), 1.4, 0.45);
 const impact = (t0, amp) => {
   thump(t0, amp * 1.2, 38);
   const lp = new Biquad();
-  const i0 = Math.floor(t0 * SR);
+  const i0 = Math.floor(W(t0) * SR);
   for (let j = 0; j < SR * 3; j++) {
     const t = j / SR;
     const s = lp.lp(noise(), 900) * Math.exp(-t / 0.5) * amp * 0.5;
@@ -226,7 +241,8 @@ impact(fr(1070), 0.65); // climax: all compute converges on Lagos
 impact(fr(1650), 0.7); // logo reveal
 
 // ── 8. Pads (supersaw chords with opening filter) ──
-const pad = (t0, t1, midis, amp, cutA, cutB, att = 1.2, rel = 1.8) => {
+const pad = (designT0, designT1, midis, amp, cutA, cutB, att = 1.2, rel = 1.8) => {
+  const t0 = W(designT0), t1 = W(designT1);
   const i0 = Math.floor(t0 * SR), i1 = Math.floor((t1 + rel) * SR);
   const voices = [];
   midis.forEach((m) => {
@@ -283,7 +299,7 @@ pad(55.0, 57.6, [38, 50, 57, 62, 66, 69, 74], 0.4, 3400, 1200, 0.05, 2.0);
   }
   // riser into climax
   const bp = new Biquad();
-  const a = fr(990), b = fr(1070);
+  const a = W(fr(990)), b = W(fr(1070));
   let ph = 0;
   for (let i = Math.floor(a * SR); i < b * SR; i++) {
     const t = i / SR, x = (t - a) / (b - a);
@@ -305,7 +321,7 @@ pad(55.0, 57.6, [38, 50, 57, 62, 66, 69, 74], 0.4, 3400, 1200, 0.05, 2.0);
     }
   });
   for (let t = 38.6; t < 45.3; t += 0.136 + rnd() * 0.2) {
-    const i0 = Math.floor(t * SR), f = 1800 + rnd() * 1600;
+    const i0 = Math.floor(W(t) * SR), f = 1800 + rnd() * 1600;
     for (let j = 0; j < SR * 0.025; j++) {
       const s = Math.sin((2 * Math.PI * f * j) / SR) * Math.exp(-j / (SR * 0.006)) * 0.025;
       add(i0 + j, s * rnd(), s * rnd(), 0.3);

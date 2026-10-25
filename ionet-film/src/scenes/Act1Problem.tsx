@@ -1,5 +1,6 @@
 import React from 'react';
-import {AbsoluteFill, useCurrentFrame} from 'remotion';
+import {AbsoluteFill} from 'remotion';
+import {useFrame} from '../time';
 import {Camera, LocationTag} from '../components/Frame';
 import {Photo} from '../components/Photo';
 import {RainStreaks} from '../components/Rain';
@@ -11,9 +12,9 @@ import {FILM} from '../config';
 
 const flash = (f: number, at: number) => Math.max(0, 1 - Math.abs(f - at) / 3) + Math.max(0, 0.6 - Math.abs(f - at - 7) / 3);
 
-/** 0–10s · The Problem — rainy Lagos at night, a stalled AI project. */
+/** The Problem — rainy Lagos at night, a stalled AI project. */
 export const Act1Problem: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const lightning = flash(f, 82) + flash(f, 214) * 0.7;
   const logs = lerp(f, [120, 180, 262], [1, 4, 5], (x) => x);
   const stalled = <TrainingScreen frame={f} mode="stalled" progress={0.23} logReveal={logs} />;

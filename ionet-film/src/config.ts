@@ -13,7 +13,7 @@ export const FILM = {
 
 /**
  * VOICEOVER
- *  - mode 'lines': one file per narration line, public/voiceover/vo-01.wav … vo-10.wav,
+ *  - mode 'lines': one file per narration line, public/voiceover/vo-01.wav … vo-08.wav,
  *    each placed automatically at that line's start time (see NARRATION.md). Before each
  *    preview or render they are combined into public/voiceover/assembled.wav (npm run voiceover).
  *    The included files were generated with the free, open Kokoro-82M voice model by

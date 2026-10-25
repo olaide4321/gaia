@@ -149,7 +149,7 @@ export const Globe: React.FC<GlobeProps> = ({
       if (p.z <= 0.02) continue;
       const lim = p.z; // limb darkening
       dotEls.push(
-        <circle key={i} cx={p.x} cy={p.y} r={1.25 + 1.1 * lim * (r / 500)} fill={C.ivoryDim} opacity={dots * (0.1 + 0.42 * lim)} />,
+        <circle key={i} cx={p.x} cy={p.y} r={1.25 + 1.1 * lim * (r / 500)} fill={C.ivoryDim} opacity={dots * (0.18 + 0.55 * lim)} />,
       );
     }
   }
@@ -243,9 +243,9 @@ export const Globe: React.FC<GlobeProps> = ({
     <svg width={1920} height={1080} style={{position: 'absolute', inset: 0}}>
       <defs>
         <radialGradient id="globeBody" cx="42%" cy="35%" r="70%">
-          <stop offset="0%" stopColor="#2a2117" />
-          <stop offset="55%" stopColor="#14100c" />
-          <stop offset="100%" stopColor="#070605" />
+          <stop offset="0%" stopColor="#4a3c2b" />
+          <stop offset="55%" stopColor="#2a2218" />
+          <stop offset="100%" stopColor="#15110c" />
         </radialGradient>
         <radialGradient id="atmo" cx="50%" cy="50%" r="50%">
           <stop offset={`${(r / (r * 1.32)) * 100 - 6}%`} stopColor={C.amber} stopOpacity={0} />
@@ -260,7 +260,7 @@ export const Globe: React.FC<GlobeProps> = ({
         </radialGradient>
         <radialGradient id="terminator" cx="72%" cy="70%" r="75%">
           <stop offset="40%" stopColor="#000" stopOpacity={0} />
-          <stop offset="100%" stopColor="#000" stopOpacity={0.55} />
+          <stop offset="100%" stopColor="#000" stopOpacity={0.3} />
         </radialGradient>
       </defs>
       <circle cx={cx} cy={cy} r={r * 1.32} fill="url(#atmo)" />

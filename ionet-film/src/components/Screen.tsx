@@ -42,13 +42,13 @@ export const TrainingScreen: React.FC<{
       style={{
         width: 1600,
         height: 900,
-        background: 'linear-gradient(180deg, #13100c 0%, #0c0a08 100%)',
+        background: 'linear-gradient(180deg, #23201b 0%, #1a1814 100%)',
         borderRadius: 10,
         position: 'relative',
         overflow: 'hidden',
         fontFamily: FONT.mono,
         color: C.ivoryDim,
-        boxShadow: 'inset 0 0 120px rgba(0,0,0,0.6)',
+        boxShadow: 'inset 0 0 120px rgba(0,0,0,0.3)',
       }}
     >
       <div style={{display: 'flex', justifyContent: 'space-between', padding: '28px 40px', borderBottom: `1px solid ${C.smoke}`, fontSize: 22}}>
@@ -206,7 +206,7 @@ export const FloodMap: React.FC<{frame: number; reveal: number}> = ({frame, reve
       style={{
         width: 1600,
         height: 900,
-        background: '#0c0a08',
+        background: '#1d1a16',
         borderRadius: 10,
         position: 'relative',
         overflow: 'hidden',
@@ -219,7 +219,7 @@ export const FloodMap: React.FC<{frame: number; reveal: number}> = ({frame, reve
         <span style={{opacity: 0.6}}>prototype · simulated data</span>
       </div>
       <svg width={MAP_W} height={780} style={{position: 'absolute', top: 92}}>
-        <rect width={MAP_W} height={780} fill="#0a0907" />
+        <rect width={MAP_W} height={780} fill="#171511" />
         {mapCells.map((c, i) => {
           if (c.water) {
             const wave = 0.5 + 0.5 * Math.sin(frame / 12 + c.x / 40 + c.y / 25);

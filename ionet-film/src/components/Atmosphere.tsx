@@ -1,11 +1,12 @@
 import React, {useMemo} from 'react';
-import {AbsoluteFill, random, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, random} from 'remotion';
+import {useFrame} from '../time';
 import {DrawCanvas} from './Canvas';
 import {C} from '../theme';
 
 /** Animated film grain, drawn at quarter resolution and scaled up. */
-export const FilmGrain: React.FC<{opacity?: number}> = ({opacity = 0.09}) => {
-  const frame = useCurrentFrame();
+export const FilmGrain: React.FC<{opacity?: number}> = ({opacity = 0.05}) => {
+  const frame = useFrame();
   const w = 480;
   const h = 270;
   return (
@@ -31,7 +32,7 @@ export const FilmGrain: React.FC<{opacity?: number}> = ({opacity = 0.09}) => {
   );
 };
 
-export const Vignette: React.FC<{strength?: number}> = ({strength = 0.85}) => (
+export const Vignette: React.FC<{strength?: number}> = ({strength = 0.35}) => (
   <AbsoluteFill
     style={{
       pointerEvents: 'none',
@@ -40,10 +41,9 @@ export const Vignette: React.FC<{strength?: number}> = ({strength = 0.85}) => (
   />
 );
 
-/** Warm grade: lifts blacks toward charcoal-brown, adds a subtle amber bloom. */
+/** Light finishing grade: a faint golden bloom, no darkening. */
 export const ColorGrade: React.FC = () => (
   <>
-    <AbsoluteFill style={{pointerEvents: 'none', background: 'rgba(40,24,8,0.10)', mixBlendMode: 'soft-light'}} />
     <AbsoluteFill
       style={{
         pointerEvents: 'none',
@@ -60,7 +60,7 @@ export const Haze: React.FC<{color?: string; opacity?: number; seed?: number}> =
   opacity = 0.18,
   seed = 1,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useFrame();
   const bands = useMemo(
     () =>
       new Array(5).fill(0).map((_, i) => ({
@@ -102,7 +102,7 @@ export const DustMotes: React.FC<{count?: number; seed?: number; color?: string;
   color = C.goldBright,
   opacity = 0.8,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useFrame();
   const motes = useMemo(
     () =>
       new Array(count).fill(0).map((_, i) => ({
@@ -140,7 +140,7 @@ export const Bokeh: React.FC<{
   yRange?: [number, number];
   drift?: number;
 }> = ({count = 40, seed = 7, opacity = 0.7, yRange = [0.3, 0.9], drift = 0.15}) => {
-  const frame = useCurrentFrame();
+  const frame = useFrame();
   const dots = useMemo(
     () =>
       new Array(count).fill(0).map((_, i) => {
