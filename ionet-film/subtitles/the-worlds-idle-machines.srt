@@ -1,0 +1,31 @@
+1
+00:00:00,333 --> 00:00:04,000
+Humanity learned to build intelligence.
+
+2
+00:00:04,067 --> 00:00:08,667
+But what happens when the world needs more computing power than it can afford?
+
+3
+00:00:08,733 --> 00:00:14,467
+Across the world, computing power sits unused, while innovators struggle to reach it.
+
+4
+00:00:14,533 --> 00:00:17,567
+What if these scattered resources could work together?
+
+5
+00:00:17,633 --> 00:00:24,600
+io.net brings distributed GPU resources together through a decentralized computing network.
+
+6
+00:00:26,200 --> 00:00:30,900
+The next breakthrough might begin with connecting what already exists.
+
+7
+00:00:32,600 --> 00:00:35,933
+The world doesn't just need more intelligence.
+
+8
+00:00:36,000 --> 00:00:39,733
+It needs more ways to power that intelligence.
