@@ -16,9 +16,8 @@ export const FILM = {
  *  - mode 'lines': one file per narration line, public/voiceover/vo-01.wav … vo-08.wav,
  *    each placed automatically at that line's start time (see NARRATION.md). Before each
  *    preview or render they are combined into public/voiceover/assembled.wav (npm run voiceover).
- *    The included files were generated with the free, open Kokoro-82M voice model by
- *    scripts/generate-voiceover.py. Replace them with your own recordings any time,
- *    keeping the same file names.
+ *    The included files are the project owner's recorded voice. Replace any of them
+ *    with a new take, keeping the same file names.
  *  - mode 'full': the whole narration as one file, public/voiceover/full.wav (starts at 0:00).
  *  - mode 'none': no voiceover, subtitles carry the story.
  */

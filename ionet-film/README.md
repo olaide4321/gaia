@@ -7,7 +7,7 @@ A 40-second cinematic film about **io.net**, built in code with [Remotion](https
 * Nine photographs supplied by the project owner (in `public/photos/`) get a light, natural colour grade and slow camera moves.
 * Calm, uplifting background music runs from start to finish, with light sound effects. It is all synthesised by a script (oscillators and noise), with no audio samples.
 * Large burned-in subtitles with key phrases in gold, also exported as `.srt` and `.vtt`.
-* The narration is voiced by the free, open Kokoro-82M AI voice model, generated offline (see [NARRATION.md](NARRATION.md)). You can swap in your own recordings.
+* The narration is the project owner's own recorded voice, cleaned up and timed to the subtitles (see [NARRATION.md](NARRATION.md)).
 
 ## The story
 
@@ -101,11 +101,13 @@ The photos live in `public/photos/` and are placed by the scene files in `src/sc
 To swap a photo, replace the file and keep its name. `<Photo grade="amber" | "warm" | "golden" | "hope">` sets the colour treatment. All four are light; `amber` mainly tones down strong blue light. Make sure you have the rights to any image you publish.
 
 ### The voiceover
-The ten narration files in `public/voiceover/` were made with **Kokoro-82M**, a free, open (Apache-2.0) neural text-to-speech model, using the voice `am_michael`. It runs offline on your computer, with no paid API or account. The model weights come from the npm package `kokoro-q8-shards` and the voices from `kokoro-js`. The setup steps are at the top of `scripts/generate-voiceover.py`.
+The eight narration files in `public/voiceover/` (`vo-01.wav` … `vo-08.wav`) are the project owner's own voice. They were recorded in one phone take, then:
+1. **Cleaned:** rumble removed, light noise reduction, less phone "boxiness", a little clarity, softer "s" sounds and gentle compression.
+2. **Cut and paced:** split at the pauses, with long mid-line pauses shortened and a pitch-preserving 6% speed-up.
+3. **Timed:** each line's `from`/`to` in `src/data/narration.json` matches its file.
 
-* **Change the voice:** run the script with `--voice`, for example `bm_george` (British male) or `af_heart` (American female). Then run `npm run render`.
-* **Change the wording:** edit `src/data/narration.json`, then run the script again. Each line is paced automatically to fit its time slot.
-* **Use your own recordings:** replace the files, keeping the names `vo-01.wav` … `vo-08.wav`. See [NARRATION.md](NARRATION.md) for timings and tips.
+* **Re-record a line:** replace that file, keeping its name. If it is longer than before, update that line's `from`/`to` in `src/data/narration.json` so the subtitle matches.
+* **AI voice instead:** `scripts/generate-voiceover.py` can still generate a free, offline AI narration (Kokoro-82M; setup steps at the top of the script). Note that it **overwrites** the files in `public/voiceover/`.
 
 ### Changing narration text or timing
 Edit **`src/data/narration.json`**. Each act there has a slot (`from`/`to`) and a `designFrames` length; the act's shots are designed on that timeline and played back at the speed that fits the slot (see `src/time.tsx`). The soundtrack follows the same act boundaries. The file is the single source of truth for:
@@ -144,7 +146,7 @@ ionet-film/
 ├── subtitles/                 ← generated subtitle files
 ├── public/photos/             ← supplied photographs (lightly graded in code)
 ├── public/ionet-logo.png      ← official io.net logo
-├── public/voiceover/          ← narration, one WAV per line (AI-generated; replaceable)
+├── public/voiceover/          ← narration, one WAV per line (owner's recorded voice)
 ├── NARRATION.md               ← narration script with timings and recording tips
 └── out/                       ← rendered video (git-ignored)
 ```

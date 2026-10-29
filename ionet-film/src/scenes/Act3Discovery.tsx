@@ -58,12 +58,12 @@ export const Act3Discovery: React.FC = () => {
           position: 'absolute',
           left: 170,
           top: 390,
-          opacity: envelope(f, 205, 335, 24, 22),
-          transform: `translateY(${lerp(f, [205, 335], [14, -8], (x) => x)}px)`,
+          opacity: envelope(f, 149, 335, 20, 22),
+          transform: `translateY(${lerp(f, [149, 335], [14, -8], (x) => x)}px)`,
         }}
       >
-        <BrandLogo scale={0.62} glow={0.8} sweep={lerp(f, [215, 265], [0, 1], (x) => x)} />
-        <div style={{width: lerp(f, [225, 270], [0, 360]), height: 1, background: C.gold, margin: '26px 0 22px'}} />
+        <BrandLogo scale={0.62} glow={0.8} sweep={lerp(f, [159, 209], [0, 1], (x) => x)} />
+        <div style={{width: lerp(f, [169, 214], [0, 360]), height: 1, background: C.gold, margin: '26px 0 22px'}} />
         <div style={{fontFamily: FONT.sans, fontSize: 20, letterSpacing: 7, color: C.ivoryDim, fontWeight: 300}}>DISTRIBUTED GPU COMPUTE</div>
       </div>
 
